@@ -2,6 +2,8 @@
 
 ## Punto de control vigente · BLOQUE 2 · 2026-11-22
 
+- **Reverificación del alcance Android y Linux.** Se ejecutó Dart 3.14.0 por ruta absoluta y se confirmó la etiqueta local de Flutter 3.50.1. APT confirmó la estimación previa de 89 paquetes, 63,0 MB de descarga y 321 MB de disco. Java, adb y sdkmanager siguen fuera de PATH. Se documentaron criterios separados de diagnóstico, compilación y arranque para ambos destinos. No se ejecutaron compilaciones ni se instalaron herramientas.
+
 - **Alcance aprobado.** Android y Linux son las únicas plataformas objetivo. Se retiraron del plan los requisitos de compilación, integración y validación de Windows. Se actualizaron `AGENT.md`, `VNE_EXECUTION_PLAN.md`, `README.md`, la guía de arranque y el plan del SDK. La decisión consta en `DECISIONS.md`. El BLOQUE 3 sigue pendiente de autorización.
 
 - **Etapa y avances.** Plan de preparación documentado en `docs/preparacion-sdk.md`. Propuesta de reutilizar Flutter 3.50.1 estable y Dart 3.14.0 en `/home/osorio/SDK/flutter`, completar primero Linux y autorizar Android por separado.

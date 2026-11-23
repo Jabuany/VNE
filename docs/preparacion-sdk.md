@@ -34,6 +34,8 @@ sudo apt install --no-install-recommends clang cmake ninja-build libgtk-3-dev
 
 `apt update` refresca índices del sistema. Revisar la simulación antes de instalar y registrar la transacción de APT. Para una reversión autorizada, usar el historial de APT para identificar paquetes añadidos y simular su retirada con `apt-get -s remove` antes de decidir. Conservar los paquetes preexistentes y los que ahora requiera otro software. Flutter puede actualizar su caché local durante el diagnóstico.
 
+El criterio de salida del BLOQUE 3 para Linux es que Doctor valide la cadena de compilación. Tras generar el runner en el BLOQUE 4, verificar con `flutter build linux` y `flutter run -d linux` desde la raíz del proyecto. Registrar por separado el resultado de la compilación y el del arranque.
+
 ## Android · autorización separada
 
 Usar un SDK local, por ejemplo `/home/osorio/SDK/android`. Para compilar se necesitan un JDK compatible con el Gradle de la plantilla, Command-line Tools, SDK Platform y Build Tools. La plantilla del SDK Flutter instalado indica `compileSdk` 36 y NDK `28.2.13676358`. Seleccionar Platform-Tools para usar `adb` con un dispositivo físico. Reservar CMake de Android para las integraciones que lo requieran. Revisar el NDK con la plantilla antes de compilar y optar por emulador e imagen de sistema solo si se necesitan.
@@ -47,3 +49,5 @@ Después de la autorización y de obtener las herramientas oficiales, estos coma
 ANDROID_HOME=/home/osorio/SDK/android /home/osorio/SDK/flutter/bin/flutter doctor --android-licenses
 ANDROID_HOME=/home/osorio/SDK/android /home/osorio/SDK/flutter/bin/flutter doctor -v
 ```
+
+Tras preparar Android y generar su runner, verificar la compilación con `flutter build apk --debug`. Con un dispositivo autorizado que aparezca en `flutter devices`, ejecutar `flutter run -d ID_DEL_DISPOSITIVO` para comprobar el arranque. Doctor, compilación y ejecución son comprobaciones separadas.
