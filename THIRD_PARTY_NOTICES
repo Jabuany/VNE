@@ -115,3 +115,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 AndroidX WebKit 1.18.0 — Android Open Source Project
 Apache License 2.0. See licenses/Apache-2.0.txt.
 https://android.googlesource.com/platform/frameworks/support/+/androidx-main/webkit/
+
+Linux HTML5 development helper — system components, supplied by the distribution
+Python 3, PyGObject, GTK 3, WebKitGTK 4.1 and Bubblewrap. See the copyright
+files of the installed packages in /usr/share/doc for their license notices.
+https://packages.debian.org/trixie/python3-gi
+https://packages.debian.org/trixie/libwebkit2gtk-4.1-0
+https://packages.debian.org/trixie/bubblewrap

@@ -1,6 +1,17 @@
 # Estado actual de VNE
 
-## Punto de control vigente · BLOQUE 10 · 2026-11-22
+## Punto de control vigente · BLOQUE 11 · 2026-11-22
+
+- **Estado y avances.** BLOQUE 11 completado. Runtime Linux de desarrollo con auxiliar Python/PyGObject, GTK 3, WebKitGTK 4.1 y Bubblewrap. Sirve el juego de solo lectura desde loopback dentro de un espacio de red propio, usa perfiles de datos por juego y ofrece regreso, silencio y pantalla completa. Android y Linux se verificaron con la misma escena propia.
+- **Archivos creados.** `runtime/html5/linux/player.py`, `lib/src/engines/html5/linux_html5_adapter.dart`, `test/linux_html5_player_test.py` y `docs/compatibilidad-html5.md`. Actualizados arranque Flutter, README, guías de runtime, avisos y este registro. Sin archivos eliminados.
+- **Dependencias.** Sin paquetes del sistema instalados. El auxiliar usa componentes Debian presentes: Python 3, PyGObject, GTK 3, WebKitGTK 2.54.3 y Bubblewrap 0.12.0. Se actualizaron solo variantes aisladas de prueba en Android.
+- **Pruebas automatizadas.** `flutter analyze --no-pub`, 35 pruebas Flutter, tres comprobaciones del detector y tres pruebas Python de rutas, rangos y archivos especiales aprobadas. Los builds debug de Linux con el auxiliar y de Android offline aprobaron.
+- **Linux físico.** En Debian 13.8 x64/Wayland, la escena cargó CSS, JS, imagen, fuente, JSON y WAV. Probados rechazo de petición y navegación externas, 404, cierre, entrada inexistente y datos separados por juego. Viewports 960 × 554 y 645 × 774. Eventos de prueba iniciaron audio y PulseAudio detectó el flujo. GTK verificó muting, F11 y Escape con confirmación del compositor. El primer montaje basado en el descriptor de otro proceso falló por permisos; se corrigió usando descriptor heredado con `--ro-bind-fd`.
+- **Android físico.** Android 15/WebView 157. Se repitieron carga, rechazo de red, cierre, entrada ausente, pausa y persistencia aislada. La variante de prueba confirmó viewports 392 × 746 y 839 × 276. El primer toque de prueba no inició audio porque el botón quedó fuera del área visible tras rotar. El reintento en vertical centró el botón e inició WebAudio. La variante con la referencia SAF persistente abrió y cerró la entrada, bloqueó navegación externa y ocultó y restauró las barras del sistema.
+- **Limitaciones.** Prueba Linux en Debian/Wayland, comprobación Android en un teléfono. Quedan codecs adicionales, búsqueda durante reproducción, compatibilidad con otras versiones y empaquetado. La prueba SAF verificó una entrada sencilla; la escena completa en Android se probó desde una copia privada. Linux carece de pausa fiable y la API explícita de guardado de ranuras sigue pendiente.
+- **Siguiente tarea.** Esperar autorización para el BLOQUE 12 de catálogo e instalación bajo demanda. No iniciar otro intérprete.
+
+## Registro del BLOQUE 10 · 2026-11-22
 
 - **Estado y avances.** BLOQUE 10 completado para Android. Reproductor HTML5 de desarrollo con Activity nativa, adaptador del Core, origen local y perfil por juego, acceso de lectura a copias privadas y referencias SAF, diagnósticos y controles de regreso, pausa y pantalla completa. Dispone de activación explícita en APK debug sin permiso de Internet.
 - **Archivos creados.** Activity, canal y lector de recursos Kotlin, manifiesto offline, adaptador Dart, prueba de adaptador, muestra propia `test/fixtures/html5`, guía de Android y texto Apache-2.0. Actualizados runner Android, composición Flutter, ficha de biblioteca, pruebas de interfaz, avisos y documentación. Sin archivos eliminados.

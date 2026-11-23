@@ -12,6 +12,7 @@ import 'src/core/game.dart';
 import 'src/detection/web_game_detector.dart';
 import 'src/engine_api/engine.dart';
 import 'src/engines/html5/android_html5_adapter.dart';
+import 'src/engines/html5/linux_html5_adapter.dart';
 import 'src/import/android_import_tree.dart';
 import 'src/import/folder_game_importer.dart';
 import 'src/import/game_importer.dart';
@@ -21,11 +22,14 @@ import 'src/storage/sqlite_game_library.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  final androidHtml5 =
-      kDebugMode &&
-          Platform.isAndroid &&
-          const bool.fromEnvironment('VNE_HTML5_DEV')
+  const linuxHelper = String.fromEnvironment('VNE_HTML5_LINUX_HELPER');
+  final RuntimeAdapter? html5 =
+      !kDebugMode || !const bool.fromEnvironment('VNE_HTML5_DEV')
+      ? null
+      : Platform.isAndroid
       ? AndroidHtml5Adapter()
+      : Platform.isLinux && linuxHelper.isNotEmpty
+      ? LinuxHtml5Adapter(linuxHelper)
       : null;
   runApp(
     VneApp(
@@ -33,9 +37,7 @@ void main() {
       importFolder: _importFolder,
       loadDetection: _loadDetection,
       changeEngine: _changeEngine,
-      playGame: androidHtml5 == null
-          ? null
-          : (game) => _play(androidHtml5, game),
+      playGame: html5 == null ? null : (game) => _play(html5, game),
     ),
   );
 }

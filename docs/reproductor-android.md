@@ -19,7 +19,7 @@ Importa `test/fixtures/html5` como carpeta local de prueba y abre su ficha. Puls
 - El runtime exige un WebView con perfiles múltiples y renderizador separado. Ante un proveedor incompatible o una entrada ausente, la biblioteca muestra un diagnóstico.
 - Cada juego tiene un perfil persistente separado. El prototipo permite probar `localStorage`. La API explícita de ranuras de guardado sigue pendiente.
 - La pausa suspende temporizadores y reproducción de elementos de audio o vídeo. Si el proveedor admite silenciar WebView, también silencia la vista en pausa o en segundo plano. La reanudación de audio depende del juego.
-- La primera versión atiende archivos locales completos. La reproducción con rangos, codecs adicionales, WebAssembly, workers y contenido de red quedan pendientes de validación. No se ofrece intérprete Linux en este bloque.
+- La primera versión atiende archivos locales completos. La reproducción con rangos, codecs adicionales, WebAssembly, workers y contenido de red quedan pendientes de validación. El reproductor de Linux tiene una [guía y matriz propias](compatibilidad-html5.md).
 - La activación de desarrollo se elige al compilar. El catálogo y la activación para distribución corresponden al BLOQUE 12.
 
 La muestra es propia. Incluye una escena HTML, CSS y JavaScript, una imagen SVG, una fuente simple creada para la prueba y un tono PCM generado. **Recursos OK · red bloqueada** indica que se cargaron los recursos, que un archivo ausente devolvió 404 y que la petición externa quedó bloqueada. **Probar audio** requiere un gesto. Al reabrir la escena, **Visita** permite comprobar persistencia, y una importación separada comprueba el perfil de otro juego.

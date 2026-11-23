@@ -1,5 +1,7 @@
 # Runtime HTML5 · propuesta del BLOQUE 9
 
+La implementación Linux del BLOQUE 11 usa un origen loopback aislado. Consulta la [matriz con los resultados](compatibilidad-html5.md).
+
 ## Comparativa y orden de implementación
 
 | Plataforma | Motor y adaptador propuestos | Base comprobada | Límites que requieren pruebas |
