@@ -47,7 +47,3 @@ Después de la autorización y de obtener las herramientas oficiales, estos coma
 ANDROID_HOME=/home/osorio/SDK/android /home/osorio/SDK/flutter/bin/flutter doctor --android-licenses
 ANDROID_HOME=/home/osorio/SDK/android /home/osorio/SDK/flutter/bin/flutter doctor -v
 ```
-
-## Windows
-
-Validar en un host Windows con Visual Studio y la carga de trabajo de escritorio con C++. Ejecutar `flutter doctor -v` allí y, tras generar el runner en el bloque correspondiente, `flutter build windows` y las pruebas de aplicación. [Flutter para Windows](https://docs.flutter.dev/platform-integration/windows/setup)

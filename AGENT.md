@@ -3,7 +3,7 @@
 ## 1. Contexto del proyecto
 
 VNE es un reproductor multiplataforma de novelas visuales y juegos
-narrativos. Su primera meta es Android, Windows y Linux, con desarrollo
+narrativos. Su primera meta es Android y Linux, con desarrollo
 inicial y pruebas en Debian.
 
 La aplicación permite que el usuario importe juegos que tenga derecho a
@@ -21,7 +21,7 @@ motores instalables bajo demanda.
 
 -   Aplicación principal: Flutter + Dart.
 -   Base de datos local: SQLite.
--   Plataformas objetivo iniciales: Android, Windows y Linux.
+-   Plataformas objetivo iniciales: Android y Linux.
 -   Entorno de desarrollo actual: Debian.
 -   Código nativo cuando sea necesario: C/C++, Kotlin/Android NDK y APIs
     específicas de cada plataforma.
@@ -250,7 +250,7 @@ fallidas. Si no puedes ejecutar una prueba, indícalo claramente.
 Al iniciar un repositorio nuevo: 1. Inspecciona el entorno Debian y
 comprueba si Flutter está instalado. 2. Si no está instalado, informa de
 los pasos necesarios; no instales nada sin autorización. 3. Crea la
-estructura mínima de Flutter para Android, Windows y Linux, según las
+estructura mínima de Flutter para Android y Linux, según las
 herramientas disponibles. 4. Establece la arquitectura base y los
 contratos mínimos. 5. Implementa la biblioteca local básica y la
 persistencia SQLite solo en el alcance necesario. 6. Diseña el
