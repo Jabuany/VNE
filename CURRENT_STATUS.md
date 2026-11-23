@@ -1,5 +1,11 @@
 # Estado actual de VNE
 
+## Pausa de trabajo · 2026-11-22
+
+- La sesión se dejó en el punto de control del BLOQUE 13. El commit `0ff6884` en `main` contiene la revisión de cierre. El historial de los bloques anteriores está en este mismo registro.
+- Al retomar, leer `AGENT.md`, `VNE_EXECUTION_PLAN.md` y este archivo. Consultar el [informe de cierre](docs/cierre-html5.md) para ver los criterios, la evidencia y el diagnóstico, y la [matriz de compatibilidad](docs/compatibilidad-html5.md) para reproducir las verificaciones.
+- Con autorización, preparar una segunda muestra original con otra estructura de archivos y un flujo de guardar y cargar. Verificar en Linux y Android que la partida se recupera al reabrir y que los datos quedan separados por juego. La licencia y el origen de distribución del auxiliar Linux siguen pendientes de decisión. La evaluación de TyranoScript queda después de la confirmación del cierre de HTML5.
+
 ## Punto de control vigente · BLOQUE 13 · 2026-11-22
 
 - **Etapa y objetivos.** Revisión de cierre completada. HTML5 funciona para el alcance probado en Android y Linux. El cierre formal queda pendiente. Se revisaron la detección, la importación, la biblioteca, la activación, los perfiles de datos, el acceso a recursos, los errores y el confinamiento.
