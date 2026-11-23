@@ -2,6 +2,8 @@
 
 ## Punto de control vigente · BLOQUE 7 · 2026-11-22
 
+- **Validación de copia en Android.** Tras la selección manual en Android 15, se confirmó un registro SQLite con modo `managedCopy`, candidato `html5` y entrada `index.html`. La copia privada, el original del teléfono y la muestra local tienen el mismo SHA-256. Queda pendiente comprobar el modo de referencia y su permiso persistente.
+
 - **Estado y avances.** Importación de carpetas locales por referencia o copia, con progreso, cancelación y límites de entradas, profundidad y bytes. Android usa SAF y Linux usa un selector nativo y aperturas confinadas. El detector inspecciona una cabecera acotada al terminar el recorrido y la biblioteca publica el registro en SQLite. Implementación y pruebas de Debian completadas. Validación física del selector Android pendiente.
 - **Archivos creados.** `android/app/src/main/kotlin/org/vne/vne/ImportTreeChannel.kt`, `lib/src/import/{android_import_tree,folder_game_importer,import_tree,linux_import_tree}.dart`, `test/folder_game_importer_test.dart` y `docs/importacion.md`. Actualizados la actividad Android, la composición y pantalla de biblioteca, el contrato de importación, el detector, las pruebas de interfaz, los manifiestos Pub, los registros generados de plugins Linux, README, avisos y este archivo. Sin archivos del repositorio eliminados.
 - **Dependencias.** `file_selector_linux` 0.9.4+1 y `ffi` 2.2.0 como dependencias directas. FFI ya formaba parte del árbol. Sin paquetes globales ni cambios de PATH. El APK de depuración aumentó unos 26 MiB respecto al BLOQUE 6.
