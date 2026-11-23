@@ -1,5 +1,15 @@
 # Estado actual de VNE
 
+## Punto de control vigente · BLOQUE 4 · 2026-11-22
+
+- **Etapa y avances.** Aplicación Flutter mínima en la raíz, con runners oficiales de Android y Linux. La pantalla de arranque muestra VNE. El detector HTML5 existente y sus comprobaciones se incorporaron al repositorio sin cambiar su contenido. La auditoría del detector conserva sus hallazgos pendientes.
+- **Archivos.** Creados `android/`, `linux/`, `lib/main.dart`, `test/widget_test.dart`, `pubspec.yaml`, `pubspec.lock`, `analysis_options.yaml`, `.gitignore` y `.metadata`. Actualizados `README.md` y este registro. Sin archivos del proyecto eliminados.
+- **Dependencias y decisiones.** Flutter 3.50.1 y Dart 3.14.0. Se usaron `widgets.dart` y `flutter_test` del SDK, y se retiraron las dependencias directas de la plantilla que la aplicación mínima no necesita. Identificador Android provisional `org.vne.vne`. Se descargaron artefactos de compilación Flutter y dependencias Gradle de la plantilla. Sin paquetes del sistema ni cambios globales.
+- **Pruebas comunes.** `flutter analyze` y `flutter test` aprobados. El análisis inicial encontró un constructor `const` incorrecto, corregido antes del reintento. Las tres comprobaciones de `dart --disable-analytics run tool/check_html5_detector.dart` aprobaron.
+- **Linux.** `flutter build linux --debug --no-pub` aprobó en Debian 13.8 amd64. El ejecutable abrió una ventana con título VNE y envió fotogramas a Wayland. El proceso se cerró al final de la comprobación de arranque.
+- **Android.** `flutter build apk --debug --no-pub` aprobó con API 36 y Temurin 21. APK en `build/app/outputs/flutter-apk/app-debug.apk`. Se verificaron su firma de depuración y el manifiesto, con Android mínimo API 24. `adb devices` no detectó un teléfono. La ejecución física sigue pendiente.
+- **Siguiente tarea.** BLOQUE 5 sujeto a autorización expresa para trabajar en contratos del Core. Para validar Android en un teléfono, conectarlo con depuración USB y autorizar la computadora.
+
 ## Preparación de Android · 2026-11-22
 
 - **Alcance autorizado.** Preparar un SDK local con herramientas de línea de comandos y usar un teléfono físico para las pruebas.

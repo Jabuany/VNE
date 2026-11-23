@@ -1,0 +1,15 @@
+name: vne
+description: "Reproductor de novelas visuales y juegos narrativos locales."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.14.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
