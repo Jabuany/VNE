@@ -45,4 +45,5 @@ Si el teléfono bloquea la instalación por USB, desbloquéalo, habilita **Insta
 - [Prueba del reproductor HTML5 en Android](docs/reproductor-android.md)
 - [Validación HTML5 en Android y Linux](docs/compatibilidad-html5.md)
 - [Catálogo e instalación de HTML5](docs/catalogo-html5.md)
+- [Revisión de cierre y diagnóstico de HTML5](docs/cierre-html5.md)
 - [Preparación del SDK](docs/preparacion-sdk.md)

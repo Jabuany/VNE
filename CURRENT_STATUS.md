@@ -1,6 +1,15 @@
 # Estado actual de VNE
 
-## Punto de control vigente · BLOQUE 12 · 2026-11-22
+## Punto de control vigente · BLOQUE 13 · 2026-11-22
+
+- **Etapa y objetivos.** Revisión de cierre completada. HTML5 funciona para el alcance probado en Android y Linux. El cierre formal queda pendiente. Se revisaron la detección, la importación, la biblioteca, la activación, los perfiles de datos, el acceso a recursos, los errores y el confinamiento.
+- **Archivos.** Creado `docs/cierre-html5.md` con la lista de criterios, evidencias y diagnóstico. Modificados `README.md` y este registro. La sesión se limitó a documentación y verificación. Sin archivos eliminados, cambios funcionales ni dependencias instaladas.
+- **Pruebas.** `flutter analyze --no-pub` sin incidencias. `flutter test --no-pub --dart-define=VNE_TEST_LINUX_RUNTIME=true` aprobó las 42 pruebas. `python3 -B -m unittest discover -s test -p linux_html5_player_test.py -v` aprobó tres pruebas y `dart --disable-analytics run tool/check_html5_detector.dart` aprobó las comprobaciones del detector.
+- **Plataformas.** `flutter build linux --debug --no-pub` y `VNE_HTML5_OFFLINE=1 flutter build apk --debug --no-pub` aprobados. Firma debug y ausencia del permiso de Internet verificadas. En Android 15, la variante de prueba ya instalada confirmó activación, reproducción y cierre del flujo del gestor. La compilación nueva se verificó por separado. No se identificaron defectos críticos en los recorridos revisados.
+- **Pendientes y decisiones.** Falta una segunda muestra legal e independiente, con otra estructura de archivos y un flujo de guardado y carga. La distribución pública del auxiliar Linux depende de la licencia del código propio y del origen de publicación. El alcance validado sigue siendo Debian 13.8 x64 con Wayland y Android 15 con WebView 157. La matriz recoge las limitaciones.
+- **Siguiente tarea.** Esperar autorización para preparar y probar la segunda muestra en ambas plataformas y una decisión sobre licencia y publicación. Evaluar TyranoScript después de la confirmación expresa del cierre de HTML5.
+
+## Registro del BLOQUE 12 · 2026-11-22
 
 - **Estado y avances.** BLOQUE 12 completado. Gestor Motores con catálogo HTML5 v1, verificación SHA-256, confirmación, progreso, cancelación, reintento, actualización, reversión y desinstalación. Linux admite un auxiliar separado elegido por archivo o descargado desde un origen HTTPS configurado. Android activa el adaptador integrado con un descriptor local y WebView del sistema. El juego solo se abre tras verificar el paquete activo.
 - **Archivos creados.** `lib/src/app/runtimes_page.dart`, `lib/src/engine_manager/html5_catalog.dart`, `lib/src/engine_manager/local_runtime_manager.dart`, `test/local_runtime_manager_test.dart`, `test/runtimes_page_test.dart` y `docs/catalogo-html5.md`. Actualizados arranque Flutter, biblioteca, contrato del gestor, adaptador Android, canal Kotlin, manifiestos Pub, avisos y documentación. Sin archivos eliminados.
