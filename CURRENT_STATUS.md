@@ -1,6 +1,15 @@
 # Estado actual de VNE
 
-## Punto de control vigente · BLOQUE 4 · 2026-11-22
+## Punto de control vigente · BLOQUE 5 · 2026-11-22
+
+- **Etapa y avances.** Contratos del Core en Dart para juego, ajustes, metadatos de guardado, diagnóstico, detección, importación, API de motor, sesiones y gestión de paquetes. Propuesta de API 1.0, con compatibilidad por número mayor y menor, y filtro adicional por plataforma y arquitectura.
+- **Archivos creados.** `lib/src/core/game.dart`, `lib/src/core/diagnostics.dart`, `lib/src/detection/game_detector.dart`, `lib/src/import/game_importer.dart`, `lib/src/engine_api/engine.dart`, `lib/src/engine_manager/runtime_manager.dart`, `test/core_contracts_test.dart` y `docs/core.md`.
+- **Archivos modificados.** `lib/src/detection/html5_detector.dart` comparte y reexporta el tipo de confianza sin cambiar la lógica de inspección. Actualizados `README.md` y `CURRENT_STATUS.md`. Sin archivos eliminados ni dependencias añadidas o instaladas.
+- **Pruebas.** Dart format ejecutado sobre los archivos nuevos. En Debian 13.8 amd64 con Flutter 3.50.1 y Dart 3.14.0, `flutter analyze --no-pub` aprobó sin incidencias, `flutter test --no-pub` aprobó seis pruebas y `dart --disable-analytics run tool/check_html5_detector.dart` aprobó las tres comprobaciones existentes.
+- **Propuesta y pendientes.** Sesión Dart tipada con transporte interno por adaptador y capacidades opcionales de pausa y guardado. Arquitectura propuesta, pendiente de aprobación. Los contratos no han sido validados con un runtime conectado. No se repitieron las compilaciones ni las pruebas de dispositivo del BLOQUE 4.
+- **Siguiente tarea.** Revisar y aprobar los contratos antes de fijar la API y autorizar el BLOQUE 6 de SQLite y biblioteca. Los hallazgos de la auditoría del detector siguen pendientes.
+
+## Registro del BLOQUE 4 · 2026-11-22
 
 - **Validación final en Android.** En el siguiente reintento, `adb -d install -r` instaló el APK correctamente en el teléfono con Android 15 (API 35). `adb shell am start -W` confirmó arranque en frío con estado `ok`. `pidof` confirmó el proceso y `dumpsys activity activities` mostró `MainActivity` en primer plano. Queda validado el arranque de la aplicación mínima en Android y Linux. El BLOQUE 5 sigue pendiente de autorización.
 

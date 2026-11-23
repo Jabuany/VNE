@@ -33,4 +33,5 @@ Si el teléfono bloquea la instalación por USB, desbloquéalo, habilita **Insta
 
 - [Estado y continuidad](CURRENT_STATUS.md)
 - [Entorno, arquitectura y plan](docs/arranque.md)
+- [Propuesta de contratos del Core](docs/core.md)
 - [Preparación del SDK](docs/preparacion-sdk.md)

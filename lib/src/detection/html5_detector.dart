@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-enum DetectionConfidence { inconclusive, candidate }
+import 'game_detector.dart';
+
+export 'game_detector.dart' show DetectionConfidence;
 
 typedef Html5Detection = ({
   DetectionConfidence confidence,
