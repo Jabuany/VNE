@@ -2,6 +2,8 @@
 
 ## Punto de control vigente · BLOQUE 4 · 2026-11-22
 
+- **Validación final en Android.** En el siguiente reintento, `adb -d install -r` instaló el APK correctamente en el teléfono con Android 15 (API 35). `adb shell am start -W` confirmó arranque en frío con estado `ok`. `pidof` confirmó el proceso y `dumpsys activity activities` mostró `MainActivity` en primer plano. Queda validado el arranque de la aplicación mínima en Android y Linux. El BLOQUE 5 sigue pendiente de autorización.
+
 - **Reverificación con teléfono.** Android 15 (API 35) detectado y autorizado en ADB. Se recompiló el APK y se verificó su firma. Dos intentos con `adb -d install -r build/app/outputs/flutter-apk/app-debug.apk` fallaron con `INSTALL_FAILED_USER_RESTRICTED: Install canceled by user`. `adb shell pm path org.vne.vne` no encontró el paquete. No se pudo probar el arranque en Android. Se documentó cómo habilitar la instalación por USB o continuar con el APK manualmente.
 - **Reverificación en Debian.** `flutter analyze --no-pub`, `flutter test --no-pub`, las tres comprobaciones del detector y `flutter build linux --debug --no-pub` aprobaron. La traza Wayland volvió a confirmar título VNE y fotogramas. Sin cambios de código ni dependencias.
 
