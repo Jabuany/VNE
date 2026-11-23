@@ -2,11 +2,13 @@
 
 ## Punto de control vigente · BLOQUE 3 · 2026-11-22
 
-- **Estado.** Parcialmente completado. El SDK local en `/home/osorio/SDK/flutter` funciona. La instalación de herramientas Linux está bloqueada por autenticación administrativa.
+- **Estado.** Completado para el alcance autorizado de Linux. El SDK local funciona y Flutter Doctor marcó la cadena de compilación Linux con `[✓]` tras la instalación realizada por el usuario.
+- **Verificación final.** `dpkg-query` confirmó Clang, CMake, Ninja y GTK 3 de desarrollo instalados. Se ejecutaron Clang 19.1.7, CMake 3.31.6 y Ninja 1.12.1. `pkg-config --modversion gtk+-3.0` devolvió 3.24.49. Los comandos ya se resuelven en la sesión y no se encontró el marcador `/run/reboot-required`. No hace falta reiniciar para que Flutter detecte la cadena Linux.
+- **Reintento.** Se repitieron las consultas de versión y `flutter doctor -v`, con los mismos resultados. `dpkg-query` confirmó que siguen sin instalarse los cuatro paquetes Linux. `sudo -n apt update` volvió a salir con código 1 y el mensaje «a password is required».
 - **Comprobaciones.** `flutter --version` y `dart --version` por ruta absoluta confirmaron Flutter 3.50.1 estable (revisión `ae9b586f34`) y Dart 3.14.0. `flutter doctor -v` terminó con código 0, detectó Linux y la conectividad, y confirmó que faltan Clang, CMake, Ninja y GTK 3 de desarrollo. Android SDK y Chrome tampoco se detectaron. Flutter y Dart siguen fuera de PATH.
 - **Instalación.** `sudo -n -l` y `sudo -n apt update` devolvieron «a password is required». La simulación con los índices actuales estimó 89 paquetes nuevos y ninguna actualización o eliminación. No se refrescaron índices ni se instaló software.
 - **Cambios.** Solo se actualizó este registro. Antes de editarlo, Git conservaba el mismo estado que al inicio del bloque. Sin cambios en código, PATH o configuración global.
-- **Siguiente tarea.** El usuario debe autenticar la transacción APT en su terminal. Después se repetirá Doctor para cerrar el BLOQUE 3. Android sigue pendiente de una autorización separada. El BLOQUE 4 requiere su propio punto de control.
+- **Siguiente tarea.** Esperar autorización para el BLOQUE 4 y generar los runners previstos. Android sigue pendiente de preparar su SDK con autorización separada. Aún no se compiló ni se ejecutó VNE.
 
 ## Registro del BLOQUE 2 · 2026-11-22
 
