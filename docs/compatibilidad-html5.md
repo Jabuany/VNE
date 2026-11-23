@@ -1,6 +1,6 @@
 # Validación del runtime HTML5
 
-La validación usa la [escena propia del repositorio](../test/fixtures/html5/). La biblioteca activa los reproductores en compilaciones de desarrollo. El catálogo y la distribución se tratan en el BLOQUE 12.
+La validación usa la [escena propia del repositorio](../test/fixtures/html5/). Instala o activa el reproductor desde el [catálogo de Motores](catalogo-html5.md).
 
 | Caso | Debian 13.8 x64 · Wayland · WebKitGTK 2.54.3 | Android 15 · WebView 157 |
 | --- | --- | --- |
@@ -18,14 +18,12 @@ La validación usa la [escena propia del repositorio](../test/fixtures/html5/). 
 El auxiliar usa Python 3, PyGObject, GTK 3, WebKitGTK 4.1 y Bubblewrap con soporte de `--ro-bind-fd`. Se comprobó con Bubblewrap 0.12.0 y Wayland en Debian. Para audio usa el socket compatible con PulseAudio, si está disponible. No se añadieron paquetes del sistema durante el bloque.
 
 ```sh
-flutter build linux --debug \
-  --dart-define=VNE_HTML5_DEV=true \
-  --dart-define=VNE_HTML5_LINUX_HELPER="$PWD/runtime/html5/linux/player.py"
+flutter build linux --debug
 build/linux/x64/debug/bundle/vne
 /usr/bin/python3 -B -m unittest discover -s test -p linux_html5_player_test.py -v
 ```
 
-Importa la muestra de prueba y abre **Reproducir**. En la ventana nativa puedes volver, mostrar pantalla completa o silenciar el audio. F11 alterna pantalla completa y Escape sale de ella. El contrato de pausa queda deshabilitado en Linux porque silenciar y ocultar la ventana no suspende de forma fiable toda la actividad de WebKit.
+Instala HTML5 desde **Motores**, importa la muestra de prueba y abre **Reproducir**. En la ventana nativa puedes volver, mostrar pantalla completa o silenciar el audio. F11 alterna pantalla completa y Escape sale de ella. El contrato de pausa queda deshabilitado en Linux porque silenciar y ocultar la ventana no suspende de forma fiable toda la actividad de WebKit.
 
 El auxiliar abre la carpeta mediante un descriptor sin seguir enlaces y Bubblewrap la monta en solo lectura. Los recursos se sirven desde una dirección loopback dentro de un espacio de red independiente. Esto mantiene un origen web convencional para `fetch` y `localStorage` sin exponer el puerto al anfitrión. WebKit conserva su sandbox interno. Cada juego usa un directorio de datos distinto. El proceso no recibe el directorio personal ni el bus general de sesión. Como resultado, el bus de accesibilidad GTK queda fuera de esta validación.
 

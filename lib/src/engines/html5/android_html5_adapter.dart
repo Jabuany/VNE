@@ -12,6 +12,8 @@ final class AndroidHtml5Adapter implements RuntimeAdapter {
   }
 
   static const _channel = MethodChannel('org.vne.vne/html5');
+  static Future<bool> available() async =>
+      await _channel.invokeMethod<bool>('available') ?? false;
   _AndroidHtml5Session? _active;
   int _nextToken = 0;
 

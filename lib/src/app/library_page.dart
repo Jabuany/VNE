@@ -4,9 +4,12 @@ import '../core/game.dart';
 import '../detection/game_detector.dart';
 import '../detection/web_game_detector.dart';
 import '../engine_api/engine.dart';
+import '../engine_manager/local_runtime_manager.dart';
+import '../engine_manager/runtime_manager.dart';
 import '../import/folder_game_importer.dart';
 import '../import/game_importer.dart';
 import '../library/game_library.dart';
+import 'runtimes_page.dart';
 
 typedef EngineChoice = ({bool automatic, String? entryPoint});
 typedef LoadDetection = Future<GameDetectionState> Function(String id);
@@ -27,6 +30,8 @@ class LibraryPage extends StatefulWidget {
     this.loadDetection,
     this.changeEngine,
     this.playGame,
+    this.runtimes,
+    this.canActivate,
   });
 
   final Future<List<Game>> Function() loadGames;
@@ -34,6 +39,8 @@ class LibraryPage extends StatefulWidget {
   final LoadDetection? loadDetection;
   final ChangeEngine? changeEngine;
   final PlayGame? playGame;
+  final LocalRuntimeManager? runtimes;
+  final Future<bool> Function()? canActivate;
 
   @override
   State<LibraryPage> createState() => _LibraryPageState();
@@ -125,6 +132,19 @@ class _LibraryPageState extends State<LibraryPage> {
     appBar: AppBar(
       title: const Text('Biblioteca'),
       actions: [
+        if (widget.runtimes case final manager?)
+          IconButton(
+            tooltip: 'Motores',
+            icon: const Icon(Icons.settings_applications_outlined),
+            onPressed: () => Navigator.of(context).push<void>(
+              MaterialPageRoute(
+                builder: (_) => RuntimesPage(
+                  manager: manager,
+                  canActivate: widget.canActivate,
+                ),
+              ),
+            ),
+          ),
         if (widget.importFolder case final importFolder?)
           IconButton(
             tooltip: 'Importar carpeta',
@@ -319,6 +339,11 @@ class _GameDetailsState extends State<_GameDetails> {
     try {
       await playGame(game);
     } on RuntimeFailure catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(error.diagnostic.message)));
+      }
+    } on RuntimeInstallFailure catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(error.diagnostic.message)));

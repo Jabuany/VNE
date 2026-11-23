@@ -44,6 +44,9 @@ final class RuntimeInstallFailure implements Exception {
   const RuntimeInstallFailure(this.diagnostic);
 
   final Diagnostic diagnostic;
+
+  @override
+  String toString() => '${diagnostic.code}: ${diagnostic.message}';
 }
 
 abstract interface class RuntimeManager {

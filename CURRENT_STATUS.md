@@ -1,6 +1,16 @@
 # Estado actual de VNE
 
-## Punto de control vigente · BLOQUE 11 · 2026-11-22
+## Punto de control vigente · BLOQUE 12 · 2026-11-22
+
+- **Estado y avances.** BLOQUE 12 completado. Gestor Motores con catálogo HTML5 v1, verificación SHA-256, confirmación, progreso, cancelación, reintento, actualización, reversión y desinstalación. Linux admite un auxiliar separado elegido por archivo o descargado desde un origen HTTPS configurado. Android activa el adaptador integrado con un descriptor local y WebView del sistema. El juego solo se abre tras verificar el paquete activo.
+- **Archivos creados.** `lib/src/app/runtimes_page.dart`, `lib/src/engine_manager/html5_catalog.dart`, `lib/src/engine_manager/local_runtime_manager.dart`, `test/local_runtime_manager_test.dart`, `test/runtimes_page_test.dart` y `docs/catalogo-html5.md`. Actualizados arranque Flutter, biblioteca, contrato del gestor, adaptador Android, canal Kotlin, manifiestos Pub, avisos y documentación. Sin archivos eliminados.
+- **Dependencias.** `crypto` 3.0.8 (BSD-3-Clause) pasó a ser directa. Se conserva SQLite, con registro de paquetes separado de juegos y guardados. No se instalaron paquetes globales.
+- **Pruebas.** `flutter analyze --no-pub`, 42 pruebas Flutter con la integración Linux activa, tres pruebas Python y tres comprobaciones del detector aprobadas. Se validaron confirmación, digest inválido, cancelación, actualización y reversión con una segunda versión sintética, desinstalación y conservación de datos. Se aprobó el arranque Linux del auxiliar propio instalado por archivo y por HTTPS. La primera consulta HTTPS no devolvió la representación esperada; el reintento aprobó al solicitar codificación identity y verificar la respuesta.
+- **Plataformas y artefactos.** Builds debug de Linux y Android offline aprobados. En la variante aislada del teléfono Android 15 se verificaron capacidad del proveedor, activación, reapertura del estado, inicio y cierre de HTML5 y desinstalación sin retirar la muestra. Artefacto local Linux verificado en `build/runtime-packages/vne-html5-linux-0.1.0.py`.
+- **Pendientes y decisión técnica.** El catálogo fija versión, plataforma y huellas. No se configuró un origen remoto por defecto. La publicación de paquetes Linux sigue pendiente de licencia y destino. El proveedor de Android se actualiza por el sistema y el gestor conserva sus perfiles. El cierre formal de HTML5 y las limitaciones de la matriz siguen sujetos al BLOQUE 13.
+- **Siguiente tarea.** Esperar autorización para el BLOQUE 13 de cierre HTML5. No iniciar otro intérprete.
+
+## Registro del BLOQUE 11 · 2026-11-22
 
 - **Estado y avances.** BLOQUE 11 completado. Runtime Linux de desarrollo con auxiliar Python/PyGObject, GTK 3, WebKitGTK 4.1 y Bubblewrap. Sirve el juego de solo lectura desde loopback dentro de un espacio de red propio, usa perfiles de datos por juego y ofrece regreso, silencio y pantalla completa. Android y Linux se verificaron con la misma escena propia.
 - **Archivos creados.** `runtime/html5/linux/player.py`, `lib/src/engines/html5/linux_html5_adapter.dart`, `test/linux_html5_player_test.py` y `docs/compatibilidad-html5.md`. Actualizados arranque Flutter, README, guías de runtime, avisos y este registro. Sin archivos eliminados.

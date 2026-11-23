@@ -1,8 +1,8 @@
+import 'dart:ffi' show Abi;
 import 'dart:io';
 import 'dart:isolate';
 
 import 'package:file_selector_linux/file_selector_linux.dart';
-import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:material_ui/material_ui.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -11,6 +11,9 @@ import 'src/core/diagnostics.dart';
 import 'src/core/game.dart';
 import 'src/detection/web_game_detector.dart';
 import 'src/engine_api/engine.dart';
+import 'src/engine_manager/html5_catalog.dart';
+import 'src/engine_manager/local_runtime_manager.dart';
+import 'src/engine_manager/runtime_manager.dart';
 import 'src/engines/html5/android_html5_adapter.dart';
 import 'src/engines/html5/linux_html5_adapter.dart';
 import 'src/import/android_import_tree.dart';
@@ -22,22 +25,36 @@ import 'src/storage/sqlite_game_library.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  const linuxHelper = String.fromEnvironment('VNE_HTML5_LINUX_HELPER');
-  final RuntimeAdapter? html5 =
-      !kDebugMode || !const bool.fromEnvironment('VNE_HTML5_DEV')
-      ? null
-      : Platform.isAndroid
-      ? AndroidHtml5Adapter()
-      : Platform.isLinux && linuxHelper.isNotEmpty
-      ? LinuxHtml5Adapter(linuxHelper)
-      : null;
+  final android = Platform.isAndroid;
+  final target = (
+    platform: android ? RuntimePlatform.android : RuntimePlatform.linux,
+    architecture: switch (Abi.current()) {
+      Abi.androidArm64 || Abi.linuxArm64 => 'arm64',
+      Abi.androidArm => 'arm',
+      Abi.androidX64 || Abi.linuxX64 => 'x64',
+      _ => 'unsupported',
+    },
+  );
+  final manager = LocalRuntimeManager(
+    directory: getApplicationSupportDirectory,
+    target: target,
+    entries: html5Catalog(
+      target,
+      linuxPackageUrl: const String.fromEnvironment('VNE_HTML5_PACKAGE_URL'),
+    ),
+  );
+  final androidAdapter = android ? AndroidHtml5Adapter() : null;
   runApp(
     VneApp(
       loadGames: _loadGames,
       importFolder: _importFolder,
       loadDetection: _loadDetection,
       changeEngine: _changeEngine,
-      playGame: html5 == null ? null : (game) => _play(html5, game),
+      runtimes: manager,
+      canActivate: android ? AndroidHtml5Adapter.available : null,
+      playGame: (game) => manager.withActive(
+        (path) => _play(androidAdapter ?? LinuxHtml5Adapter(path!), game),
+      ),
     ),
   );
 }
@@ -137,6 +154,8 @@ class VneApp extends StatelessWidget {
     this.loadDetection,
     this.changeEngine,
     this.playGame,
+    this.runtimes,
+    this.canActivate,
   });
 
   final Future<List<Game>> Function() loadGames;
@@ -144,6 +163,8 @@ class VneApp extends StatelessWidget {
   final LoadDetection? loadDetection;
   final ChangeEngine? changeEngine;
   final PlayGame? playGame;
+  final LocalRuntimeManager? runtimes;
+  final Future<bool> Function()? canActivate;
 
   @override
   Widget build(BuildContext context) => MaterialApp(
@@ -164,6 +185,8 @@ class VneApp extends StatelessWidget {
       loadDetection: loadDetection,
       changeEngine: changeEngine,
       playGame: playGame,
+      runtimes: runtimes,
+      canActivate: canActivate,
     ),
   );
 }

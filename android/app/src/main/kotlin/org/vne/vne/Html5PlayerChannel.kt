@@ -3,9 +3,10 @@ package org.vne.vne
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.net.Uri
+import androidx.webkit.WebViewCompat
+import androidx.webkit.WebViewFeature
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodChannel
 
@@ -19,15 +20,20 @@ internal class Html5PlayerChannel(
     init {
         channel.setMethodCallHandler { call, result ->
             when (call.method) {
+                "available" -> result.success(
+                    activity.checkSelfPermission(Manifest.permission.INTERNET) !=
+                        PackageManager.PERMISSION_GRANTED &&
+                        WebViewFeature.isFeatureSupported(WebViewFeature.MULTI_PROFILE) &&
+                        WebViewFeature.isFeatureSupported(WebViewFeature.MULTI_PROCESS) &&
+                        WebViewCompat.isMultiProcessEnabled(),
+                )
                 "launch" -> {
                     val gameId = call.argument<String>("gameId")
                     val source = call.argument<String>("source")
                     val entry = call.argument<String>("entryPoint")
                     val managed = call.argument<Boolean>("managed")
                     val token = call.argument<Int>("token")
-                    if (activity.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE == 0) {
-                        result.error("activation_required", "El motor HTML5 requiere activación.", null)
-                    } else if (activity.checkSelfPermission(Manifest.permission.INTERNET) ==
+                    if (activity.checkSelfPermission(Manifest.permission.INTERNET) ==
                         PackageManager.PERMISSION_GRANTED
                     ) {
                         result.error("network_permission", "Usa la compilación HTML5 sin permiso de Internet.", null)

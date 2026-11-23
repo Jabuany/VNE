@@ -2,7 +2,7 @@
 
 Reproductor en desarrollo para novelas visuales y juegos narrativos locales en Android y Linux. El primer runtime previsto es HTML5.
 
-Android y Linux disponen de un reproductor HTML5 de desarrollo.
+Android y Linux disponen de un reproductor HTML5 que se habilita desde **Motores**.
 
 La biblioteca local guarda sus datos en SQLite. La pantalla inicial ofrece búsqueda y detalles de los juegos registrados.
 
@@ -44,4 +44,5 @@ Si el teléfono bloquea la instalación por USB, desbloquéalo, habilita **Insta
 - [Evaluación del runtime HTML5](docs/runtime-html5.md)
 - [Prueba del reproductor HTML5 en Android](docs/reproductor-android.md)
 - [Validación HTML5 en Android y Linux](docs/compatibilidad-html5.md)
+- [Catálogo e instalación de HTML5](docs/catalogo-html5.md)
 - [Preparación del SDK](docs/preparacion-sdk.md)
