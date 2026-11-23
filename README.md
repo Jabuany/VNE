@@ -41,4 +41,5 @@ Si el teléfono bloquea la instalación por USB, desbloquéalo, habilita **Insta
 - [Biblioteca, migraciones y respaldo](docs/biblioteca.md)
 - [Importación local y límites](docs/importacion.md)
 - [Detección web y selección de motor](docs/deteccion.md)
+- [Evaluación del runtime HTML5](docs/runtime-html5.md)
 - [Preparación del SDK](docs/preparacion-sdk.md)

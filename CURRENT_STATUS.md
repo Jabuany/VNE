@@ -1,6 +1,14 @@
 # Estado actual de VNE
 
-## Punto de control vigente · BLOQUE 8 · 2026-11-22
+## Punto de control vigente · BLOQUE 9 · 2026-11-22
+
+- **Estado y avances.** Evaluación del runtime HTML5 completada. Propuesta pendiente de aprobación: Android primero con Activity Kotlin, WebView del sistema y AndroidX WebKit. Para Linux, auxiliar GTK 3 con WebKitGTK 4.1, perfil por juego y Bubblewrap. Se documentaron navegación, recursos locales, permisos, audio, entrada, pantalla completa, cierre y aislamiento de datos.
+- **Archivos.** Creado `docs/runtime-html5.md`. Actualizados `README.md` y este registro. Sin archivos eliminados, cambios de código, dependencias instaladas ni descargas de juegos.
+- **Comprobaciones.** `adb shell dumpsys webviewupdate` confirmó WebView 157.0.8103.50 en Android 15. En Debian 13.8 amd64, `dpkg-query` y una consulta de versión de la biblioteca confirmaron WebKitGTK 2.54.3. Bubblewrap 0.12.0 creó un espacio de red distinto del anfitrión, con solo loopback, para una prueba de shell. La simulación APT de `libwebkit2gtk-4.1-dev` estimó 13 paquetes, 2,2 MB de descarga y 13,9 MB adicionales.
+- **Pendientes.** Se requiere verificar `MULTI_PROFILE`, la carga local con red bloqueada y el aislamiento con los motores activos. La prueba de Bubblewrap no ejecutó WebKitGTK. No se ejecutó ni validó la reproducción HTML5.
+- **Siguiente tarea.** Aprobar plataforma inicial y estrategia de aislamiento, y autorizar el BLOQUE 10. Revisar en el BLOQUE 12 la activación opcional del adaptador Android y el empaquetado independiente del auxiliar Linux. No se registraron decisiones técnicas nuevas como aprobadas.
+
+## Registro del BLOQUE 8 · 2026-11-22
 
 - **Estado y avances.** Detección estática web integrada con importación y biblioteca. Clasifica contenido desconocido, HTML genérico, posible juego web y estructura identificada de TyranoScript. SQLite guarda evidencia, confianza, versión e indicios de entrada con el juego en una transacción. La selección manual distingue preferencia y evidencia original.
 - **Archivos creados.** `lib/src/detection/web_game_detector.dart`, `test/web_game_detector_test.dart` y `docs/deteccion.md`.
