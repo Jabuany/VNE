@@ -1,5 +1,13 @@
 # Estado actual de VNE
 
+## Preparación de Android · 2026-11-22
+
+- **Alcance autorizado.** Preparar un SDK local con herramientas de línea de comandos y usar un teléfono físico para las pruebas.
+- **JDK instalado y verificado.** Eclipse Temurin 21.0.13.1+2 en `/home/osorio/SDK/temurin-21.0.13.1`. SHA-256 cotejado con el publicado por Adoptium. `java -version` y `javac -version` ejecutados correctamente. Sin cambios de PATH ni paquetes del sistema.
+- **SDK Android instalado.** Tras la aceptación del usuario, se cotejó el SHA-256 de las herramientas de línea de comandos y se instaló SDK Tools 22.0, plataforma Android 36 (revisión 2), Build Tools 36.0.0, Platform-Tools 37.0.3 y NDK 28.2.13676358 en `/home/osorio/SDK/android`. Sin Android Studio, emulador ni cambios globales de PATH.
+- **Verificación del BLOQUE 3.** Flutter Doctor detectó el SDK y Java mediante `ANDROID_HOME` y `JAVA_HOME` por invocación. Linux sigue con `[✓]`. Android queda con aviso por siete licencias de componentes adicionales sin instalar. Los cuatro paquetes instalados referencian `android-sdk-license`, presente en el SDK local. `adb version` pasó y `adb devices -l` no detectó un teléfono.
+- **Siguiente paso.** BLOQUE 3 completado para la preparación autorizada. El BLOQUE 4 requiere autorización para generar runners y compilar. El arranque en Android queda pendiente de conectar un teléfono con depuración USB y autorizar el equipo.
+
 ## Punto de control vigente · BLOQUE 3 · 2026-11-22
 
 - **Estado.** Completado para el alcance autorizado de Linux. El SDK local funciona y Flutter Doctor marcó la cadena de compilación Linux con `[✓]` tras la instalación realizada por el usuario.
@@ -8,7 +16,7 @@
 - **Comprobaciones.** `flutter --version` y `dart --version` por ruta absoluta confirmaron Flutter 3.50.1 estable (revisión `ae9b586f34`) y Dart 3.14.0. `flutter doctor -v` terminó con código 0, detectó Linux y la conectividad, y confirmó que faltan Clang, CMake, Ninja y GTK 3 de desarrollo. Android SDK y Chrome tampoco se detectaron. Flutter y Dart siguen fuera de PATH.
 - **Instalación.** `sudo -n -l` y `sudo -n apt update` devolvieron «a password is required». La simulación con los índices actuales estimó 89 paquetes nuevos y ninguna actualización o eliminación. No se refrescaron índices ni se instaló software.
 - **Cambios.** Solo se actualizó este registro. Antes de editarlo, Git conservaba el mismo estado que al inicio del bloque. Sin cambios en código, PATH o configuración global.
-- **Siguiente tarea.** Esperar autorización para el BLOQUE 4 y generar los runners previstos. Android sigue pendiente de preparar su SDK con autorización separada. Aún no se compiló ni se ejecutó VNE.
+- **Siguiente tarea.** Esperar autorización para el BLOQUE 4 y generar los runners previstos. El SDK de Android se preparó después de esta verificación Linux. Aún no se compiló ni se ejecutó VNE.
 
 ## Registro del BLOQUE 2 · 2026-11-22
 
