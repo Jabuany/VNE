@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:vne/src/core/game.dart';
+import 'package:vne/src/detection/game_detector.dart';
+import 'package:vne/src/detection/web_game_detector.dart';
 import 'package:vne/src/storage/sqlite_game_library.dart';
 
 void main() {
@@ -76,6 +78,117 @@ void main() {
       )),
       throwsA(isA<SqliteException>()),
     );
+  });
+
+  test('migrates a version 1 library without inventing evidence', () {
+    final database = sqlite3.open(path);
+    database.execute('''
+      CREATE TABLE games (
+        id TEXT PRIMARY KEY NOT NULL, title TEXT NOT NULL, source_uri TEXT NOT NULL,
+        storage TEXT NOT NULL, engine_id TEXT, entry_point TEXT
+      ) STRICT;
+      CREATE TABLE game_settings (
+        game_id TEXT PRIMARY KEY NOT NULL REFERENCES games(id) ON DELETE CASCADE,
+        fullscreen INTEGER NOT NULL, preferred_locale TEXT
+      ) STRICT;
+      PRAGMA user_version = 1;
+    ''');
+    database.execute('INSERT INTO games VALUES (?, ?, ?, ?, ?, ?)', [
+      game.id,
+      game.title,
+      game.source.uri.toString(),
+      game.source.storage.name,
+      game.engineId,
+      game.entryPoint,
+    ]);
+    database.execute('INSERT INTO game_settings VALUES (?, ?, ?)', [
+      game.id,
+      1,
+      'es',
+    ]);
+    database.close();
+
+    final library = SqliteGameLibrary.open(path);
+    addTearDown(library.close);
+    expect(library.findGame(game.id), game);
+    expect(library.findSettings(game.id), (
+      fullscreen: true,
+      preferredLocale: 'es',
+    ));
+    expect(library.findDetection(game.id), (report: null, manual: false));
+    expect(library.selectEngine(game.id, automatic: false).engineId, isNull);
+    expect(library.findDetection(game.id), (report: null, manual: true));
+  });
+
+  test('a manual selection persists without changing automatic evidence', () {
+    final report = WebDetection(
+      version: 1,
+      kind: WebContentKind.identifiedWebEngine,
+      confidence: DetectionConfidence.candidate,
+      suggestedEngineId: 'tyranoscript',
+      entryPoint: 'index.html',
+      htmlEntries: ['index.html', 'intro.htm'],
+      evidence: ['Structure marker'],
+    );
+    final library = SqliteGameLibrary.open(path);
+    library.saveImportedGame((
+      id: game.id,
+      title: game.title,
+      source: game.source,
+      engineId: 'tyranoscript',
+      entryPoint: 'index.html',
+    ), report);
+    expect(
+      () => library.selectEngine(
+        game.id,
+        automatic: false,
+        entryPoint: '../other.html',
+      ),
+      throwsArgumentError,
+    );
+    expect(
+      library
+          .selectEngine(game.id, automatic: false, entryPoint: 'intro.htm')
+          .engineId,
+      'html5',
+    );
+    library.close();
+
+    final reopened = SqliteGameLibrary.open(path);
+    addTearDown(reopened.close);
+    expect(reopened.findGame(game.id)?.entryPoint, 'intro.htm');
+    final stored = reopened.findDetection(game.id);
+    expect(stored.manual, isTrue);
+    expect(stored.report?.evidence, report.evidence);
+    expect(stored.report?.suggestedEngineId, 'tyranoscript');
+    expect(stored.report?.version, 1);
+    expect(
+      reopened.selectEngine(game.id, automatic: true).engineId,
+      'tyranoscript',
+    );
+    expect(reopened.findGame(game.id)?.entryPoint, 'index.html');
+    expect(reopened.findDetection(game.id).manual, isFalse);
+    reopened.removeGame(game.id);
+    expect(reopened.findDetection(game.id).report, isNull);
+  });
+
+  test('rolls back imported game when its detection report fails to save', () {
+    final library = SqliteGameLibrary.open(path);
+    addTearDown(library.close);
+    final invalid = WebDetection(
+      version: 0,
+      kind: WebContentKind.unknown,
+      confidence: DetectionConfidence.inconclusive,
+      suggestedEngineId: null,
+      entryPoint: null,
+      htmlEntries: [],
+      evidence: [],
+    );
+    expect(
+      () => library.saveImportedGame(game, invalid),
+      throwsA(isA<SqliteException>()),
+    );
+    expect(library.findGame(game.id), isNull);
   });
 
   test('does not rewrite a database created with a newer schema', () {

@@ -1,6 +1,16 @@
 # Estado actual de VNE
 
-## Punto de control vigente · BLOQUE 7 · 2026-11-22
+## Punto de control vigente · BLOQUE 8 · 2026-11-22
+
+- **Estado y avances.** Detección estática web integrada con importación y biblioteca. Clasifica contenido desconocido, HTML genérico, posible juego web y estructura identificada de TyranoScript. SQLite guarda evidencia, confianza, versión e indicios de entrada con el juego en una transacción. La selección manual distingue preferencia y evidencia original.
+- **Archivos creados.** `lib/src/detection/web_game_detector.dart`, `test/web_game_detector_test.dart` y `docs/deteccion.md`.
+- **Archivos modificados.** Composición Flutter, pantalla de biblioteca, importador de carpeta, contrato de biblioteca, repositorio SQLite, tres archivos de pruebas existentes, README, guías de biblioteca e importación y este registro. Sin archivos eliminados.
+- **Pruebas.** Dart format ejecutado. `flutter analyze --no-pub` aprobó sin incidencias después de actualizar el callback de publicación en pruebas y retirar un import redundante. `flutter test --no-pub` aprobó 32 pruebas. Las tres comprobaciones del detector anterior aprobaron. Se probaron falsos positivos y negativos, prioridad de TyranoScript, límite de cabecera, migración, persistencia y corrección manual.
+- **Validación en plataforma.** Compilaciones debug Linux y Android aprobadas. En Debian 13.8 x64, la app migró una biblioteca de prueba del esquema 1 al 2 y conservó juego y ajustes. En Android 15 físico se actualizó la variante aislada, se verificó el arranque y se confirmó que la migración mantuvo sus dos juegos. La interacción de corrección manual se verificó mediante pruebas de widgets en Debian.
+- **Decisiones y dependencias.** Sin dependencias añadidas o instaladas. Informe de detector v1 y esquema SQLite 2. Registros previos sin informe conservan su motor y entrada. La firma de TyranoScript es clasificación estructural y no integra su intérprete.
+- **Pendientes y siguiente tarea.** HTML5 aún no se reproduce. Esperar autorización para el BLOQUE 9 y evaluar el runtime en Linux y Android.
+
+## Registro del BLOQUE 7 · 2026-11-22
 
 - **Validación de copia en Android.** Tras la selección manual en Android 15, se confirmó un registro SQLite con modo `managedCopy`, candidato `html5` y entrada `index.html`. La copia privada, el original del teléfono y la muestra local tienen el mismo SHA-256.
 - **Validación de referencia en Android.** Tras reiniciar la variante aislada con `adb shell am force-stop` y `am start -W`, SQLite conservó ambos modos. La referencia tiene URI SAF, candidato `html5` y entrada `index.html`. `adb shell dumpsys activity permissions` confirmó acceso de lectura persistente (`persisted=0x1`) asignado a la variante de prueba. El comando suplementario `content read` desde `run-as` no pudo ejecutarse por los permisos del comando de Android. La variante y la muestra temporal siguen en el teléfono.

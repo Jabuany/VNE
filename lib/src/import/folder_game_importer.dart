@@ -5,6 +5,7 @@ import 'dart:math';
 import '../core/diagnostics.dart';
 import '../core/game.dart';
 import '../detection/html5_detector.dart';
+import '../detection/web_game_detector.dart';
 import 'game_importer.dart';
 import 'import_tree.dart';
 
@@ -36,7 +37,7 @@ final class FolderGameImporter implements GameImporter {
 
   final Directory managedRoot;
   final Future<ImportTree> Function(Uri source) openTree;
-  final Future<void> Function(Game game) publish;
+  final Future<void> Function(Game game, WebDetection detection) publish;
   final ImportCancellation cancellation;
   final void Function(ImportProgress progress) onProgress;
   final int maxEntries;
@@ -52,13 +53,14 @@ final class FolderGameImporter implements GameImporter {
       await managedRoot.create(recursive: true);
       final tree = await openTree(request.source);
       final Game game;
+      final WebDetection detection;
       try {
         if (request.storage == GameStorage.managedCopy) {
           staging = await managedRoot.createTemp('game-');
         }
         final scan = _FolderScan(this, tree);
         await scan.walk(tree.root, staging, 0);
-        final detection = await scan.detect(staging);
+        detection = await scan.detect(staging);
         cancellation.check();
         if (request.storage == GameStorage.externalReference) {
           await tree.retainReference();
@@ -70,19 +72,15 @@ final class FolderGameImporter implements GameImporter {
             uri: staging?.uri ?? request.source,
             storage: request.storage,
           ),
-          engineId:
-              request.selectedEngineId ??
-              (detection?.confidence == DetectionConfidence.candidate
-                  ? 'html5'
-                  : null),
-          entryPoint: detection?.entryPoint,
+          engineId: request.selectedEngineId ?? detection.suggestedEngineId,
+          entryPoint: detection.entryPoint,
         );
       } finally {
         await tree.close();
       }
       cancellation.check();
       onProgress((phase: ImportPhase.publishing, entries: 0, bytes: 0));
-      await publish(game);
+      await publish(game, detection);
       return GameImported(game);
     } on _Cancelled {
       result = const ImportCancelled();
@@ -135,9 +133,15 @@ final class _FolderScan {
   final Set<String> _directories = {};
   int _entries = 0;
   int _bytes = 0;
-  TreeEntry? _index;
+  final List<TreeEntry> _html = [];
+  final Set<String> _markers = {};
 
-  Future<void> walk(String id, Directory? output, int depth) async {
+  Future<void> walk(
+    String id,
+    Directory? output,
+    int depth, [
+    String path = '',
+  ]) async {
     if (depth > importer.maxDepth || !_directories.add(id)) {
       throw const _InvalidFolder(
         'La carpeta es demasiado profunda o se repite.',
@@ -162,14 +166,16 @@ final class _FolderScan {
       ));
       importer.cancellation.check();
       final destination = output?.uri.resolveUri(Uri(pathSegments: [name]));
+      final relative = '$path$name';
       if (entry.isDirectory) {
         final child = destination == null
             ? null
             : Directory.fromUri(destination);
         await child?.create();
-        await walk(entry.id, child, depth + 1);
+        await walk(entry.id, child, depth + 1, '$relative/');
       } else {
-        if (depth == 0 && name == 'index.html') _index = entry;
+        if (depth == 0 && WebGameDetector.isHtmlName(name)) _html.add(entry);
+        if (WebGameDetector.markers.contains(relative)) _markers.add(relative);
         final size = entry.size;
         if (size != null && (size < 0 || size > importer.maxBytes - _bytes)) {
           throw const _InvalidFolder('La carpeta supera el límite de tamaño.');
@@ -213,21 +219,37 @@ final class _FolderScan {
     }
   }
 
-  Future<Html5Detection?> detect(Directory? staging) async {
+  Future<WebDetection> detect(Directory? staging) async {
     importer.cancellation.check();
-    final index = _index;
-    if (index == null) return null;
+    _html.sort((a, b) {
+      final rank = WebGameDetector.entryRank(a.name)
+          .compareTo(WebGameDetector.entryRank(b.name));
+      return rank == 0 ? a.name.compareTo(b.name) : rank;
+    });
+    final prefixes = <String, List<int>>{};
+    for (final entry in _html.take(WebGameDetector.maxHtmlEntries)) {
+      prefixes[entry.name] = await _readPrefix(entry, staging);
+    }
+    return WebGameDetector().inspect(
+      htmlPrefixes: prefixes,
+      files: _markers,
+      truncated: _html.length > WebGameDetector.maxHtmlEntries,
+    );
+  }
+
+  Future<List<int>> _readPrefix(TreeEntry entry, Directory? staging) async {
     const limit = Html5Detector.prefixLimit;
     final chunks = staging == null
-        ? tree.read(index.id, limit: limit)
-        : File.fromUri(staging.uri.resolve('index.html')).openRead(0, limit);
+        ? tree.read(entry.id, limit: limit)
+        : File.fromUri(staging.uri.resolveUri(Uri(pathSegments: [entry.name])))
+              .openRead(0, limit);
     final prefix = <int>[];
     await for (final chunk in chunks) {
       importer.cancellation.check();
       prefix.addAll(chunk.take(limit - prefix.length));
       if (prefix.length == limit) break;
     }
-    return Html5Detector().inspectPrefix(prefix);
+    return prefix;
   }
 
   static bool _safeName(String name) =>

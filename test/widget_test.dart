@@ -2,6 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:vne/main.dart';
 import 'package:vne/src/core/game.dart';
+import 'package:vne/src/detection/game_detector.dart';
+import 'package:vne/src/detection/web_game_detector.dart';
 import 'package:vne/src/import/game_importer.dart';
 
 void main() {
@@ -86,5 +88,59 @@ void main() {
 
     expect(selected, GameStorage.externalReference);
     expect(find.text('Novela local'), findsOneWidget);
+  });
+
+  testWidgets('details preserve detection evidence while changing motor', (
+    tester,
+  ) async {
+    Game game = (
+      id: 'detection',
+      title: 'Inicio',
+      source: (uri: Uri.directory('/local'), storage: GameStorage.managedCopy),
+      engineId: null,
+      entryPoint: null,
+    );
+    final report = WebDetection(
+      version: 1,
+      kind: WebContentKind.genericHtml,
+      confidence: DetectionConfidence.inconclusive,
+      suggestedEngineId: null,
+      entryPoint: null,
+      htmlEntries: ['inicio.htm', 'menu.html'],
+      evidence: ['Hay varias entradas HTML.'],
+    );
+    await tester.pumpWidget(
+      VneApp(
+        loadGames: () async => [game],
+        loadDetection: (_) async => (report: report, manual: false),
+        changeEngine: (_, choice) async {
+          expect(choice.automatic, isFalse);
+          expect(choice.entryPoint, 'inicio.htm');
+          game = (
+            id: game.id,
+            title: game.title,
+            source: game.source,
+            engineId: 'html5',
+            entryPoint: choice.entryPoint,
+          );
+          return game;
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Inicio'));
+    await tester.pumpAndSettle();
+    expect(find.text('HTML genérico'), findsOneWidget);
+    expect(find.text('Hay varias entradas HTML.'), findsOneWidget);
+    await tester.tap(find.text('Cambiar motor'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('HTML5 · inicio.htm'));
+    await tester.pumpAndSettle();
+    expect(find.text('inicio.htm'), findsOneWidget);
+    expect(
+      find.text('Detector v1 · Inconcluso · Selección manual'),
+      findsOneWidget,
+    );
+    expect(find.text('Hay varias entradas HTML.'), findsOneWidget);
   });
 }

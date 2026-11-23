@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vne/src/core/game.dart';
+import 'package:vne/src/detection/web_game_detector.dart';
 import 'package:vne/src/import/folder_game_importer.dart';
 import 'package:vne/src/import/game_importer.dart';
 import 'package:vne/src/import/linux_import_tree.dart';
@@ -35,17 +36,17 @@ void main() {
     int maxBytes = 1024,
     int maxDepth = 32,
     void Function(ImportProgress)? onProgress,
-    Future<void> Function(Game)? publish,
+    Future<void> Function(Game, WebDetection)? publish,
   }) {
     final importer = FolderGameImporter(
       managedRoot: managed,
       openTree: (uri) => LinuxImportTree.open(uri, managed),
       publish:
           publish ??
-          (game) async {
+          (game, detection) async {
             final library = SqliteGameLibrary.open(databasePath);
             try {
-              library.saveGame(game);
+              library.saveImportedGame(game, detection);
             } finally {
               library.close();
             }
@@ -70,6 +71,9 @@ void main() {
           .create();
       await File.fromUri(assets.uri.resolve('texto%20%C3%A1.txt'))
           .writeAsString('texto');
+      await File.fromUri(source.uri.resolve('game.js'))
+          .writeAsString('// test');
+      await File.fromUri(source.uri.resolve('game.json')).writeAsString('{}');
       final result = await run(GameStorage.managedCopy);
       expect(result, isA<GameImported>());
       final game = (result as GameImported).game;
@@ -91,6 +95,10 @@ void main() {
       final library = SqliteGameLibrary.open(databasePath);
       addTearDown(library.close);
       expect(library.findGame(game.id), game);
+      final report = library.findDetection(game.id).report!;
+      expect(report.kind, WebContentKind.possibleWebGame);
+      expect(report.version, WebGameDetector.version);
+      expect(report.evidence.join(' '), contains('game.json'));
     },
   );
 
@@ -188,7 +196,7 @@ void main() {
       cancellation = ImportCancellation();
       final failed = await run(
         GameStorage.managedCopy,
-        publish: (_) async => throw const FileSystemException('Unavailable'),
+        publish: (_, _) async => throw const FileSystemException('Unavailable'),
       );
       expect(failed, isA<ImportFailed>());
       expect(await managed.list().toList(), isEmpty);

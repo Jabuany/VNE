@@ -1,8 +1,15 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../core/game.dart';
+import '../detection/game_detector.dart';
+import '../detection/web_game_detector.dart';
 import '../import/folder_game_importer.dart';
 import '../import/game_importer.dart';
+import '../library/game_library.dart';
+
+typedef EngineChoice = ({bool automatic, String? entryPoint});
+typedef LoadDetection = Future<GameDetectionState> Function(String id);
+typedef ChangeEngine = Future<Game> Function(String id, EngineChoice choice);
 
 typedef FolderImportAction = Future<ImportResult?> Function(
   GameStorage storage,
@@ -11,10 +18,18 @@ typedef FolderImportAction = Future<ImportResult?> Function(
 );
 
 class LibraryPage extends StatefulWidget {
-  const LibraryPage({super.key, required this.loadGames, this.importFolder});
+  const LibraryPage({
+    super.key,
+    required this.loadGames,
+    this.importFolder,
+    this.loadDetection,
+    this.changeEngine,
+  });
 
   final Future<List<Game>> Function() loadGames;
   final FolderImportAction? importFolder;
+  final LoadDetection? loadDetection;
+  final ChangeEngine? changeEngine;
 
   @override
   State<LibraryPage> createState() => _LibraryPageState();
@@ -200,7 +215,12 @@ class _LibraryPageState extends State<LibraryPage> {
                                   trailing: const Icon(Icons.chevron_right),
                                   onTap: () => Navigator.of(context).push<void>(
                                     MaterialPageRoute(
-                                      builder: (_) => _GameDetails(game: game),
+                                      builder: (_) => _GameDetails(
+                                        game: game,
+                                        loadDetection: widget.loadDetection,
+                                        changeEngine: widget.changeEngine,
+                                        onChanged: _refreshGames,
+                                      ),
                                     ),
                                   ),
                                 );
@@ -216,6 +236,14 @@ class _LibraryPageState extends State<LibraryPage> {
       ),
     ),
   );
+
+  void _refreshGames() {
+    if (!mounted) return;
+    final games = widget.loadGames();
+    setState(() {
+      _games = games;
+    });
+  }
 }
 
 class _ImportStatus extends StatelessWidget {
@@ -254,10 +282,82 @@ String _runtimeStatus(Game game) => game.engineId == null
     ? 'Motor sin seleccionar'
     : 'Motor asignado · disponibilidad sin verificar';
 
-class _GameDetails extends StatelessWidget {
-  const _GameDetails({required this.game});
+class _GameDetails extends StatefulWidget {
+  const _GameDetails({
+    required this.game,
+    required this.loadDetection,
+    required this.changeEngine,
+    required this.onChanged,
+  });
 
   final Game game;
+  final LoadDetection? loadDetection;
+  final ChangeEngine? changeEngine;
+  final VoidCallback onChanged;
+
+  @override
+  State<_GameDetails> createState() => _GameDetailsState();
+}
+
+class _GameDetailsState extends State<_GameDetails> {
+  late Game game = widget.game;
+  late Future<GameDetectionState>? _detection = widget.loadDetection?.call(
+    game.id,
+  );
+  bool _saving = false;
+
+  Future<void> _chooseEngine(
+    GameDetectionState detection,
+    ChangeEngine changeEngine,
+  ) async {
+    final report = detection.report;
+    final eligible =
+        report?.htmlEntries ?? [if (game.entryPoint case final entry?) entry];
+    final choice = await showDialog<EngineChoice>(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: const Text('Selección de motor'),
+        children: [
+          if (report != null)
+            SimpleDialogOption(
+              onPressed: () =>
+                  Navigator.pop(context, (automatic: true, entryPoint: null)),
+              child: const Text('Usar detección automática'),
+            ),
+          SimpleDialogOption(
+            onPressed: () =>
+                Navigator.pop(context, (automatic: false, entryPoint: null)),
+            child: const Text('Dejar sin motor'),
+          ),
+          for (final entry in eligible)
+            SimpleDialogOption(
+              onPressed: () =>
+                  Navigator.pop(context, (automatic: false, entryPoint: entry)),
+              child: Text('HTML5 · $entry'),
+            ),
+        ],
+      ),
+    );
+    if (!mounted || choice == null) return;
+    setState(() => _saving = true);
+    try {
+      final updated = await changeEngine(game.id, choice);
+      widget.onChanged();
+      if (!mounted) return;
+      setState(() {
+        game = updated;
+        _detection = Future.value((report: report, manual: !choice.automatic));
+      });
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se pudo guardar la selección.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -271,7 +371,12 @@ class _GameDetails extends StatelessWidget {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           if (game.engineId case final engine?)
-            ListTile(title: const Text('Motor'), subtitle: Text(engine)),
+            ListTile(
+              title: const Text('Motor'),
+              subtitle: Text(
+                engine == 'tyranoscript' ? 'TyranoScript' : engine,
+              ),
+            ),
           if (game.entryPoint case final entry?)
             ListTile(
               title: const Text('Punto de entrada'),
@@ -284,6 +389,63 @@ class _GameDetails extends StatelessWidget {
               GameStorage.managedCopy => 'Copia administrada',
             }),
           ),
+          if (_detection case final detection?)
+            FutureBuilder<GameDetectionState>(
+              future: detection,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const ListTile(
+                    title: Text('No se pudo leer la detección.'),
+                  );
+                }
+                if (!snapshot.hasData) return const SizedBox.shrink();
+                final state = snapshot.requireData;
+                final report = state.report;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Divider(),
+                    ListTile(
+                      title: Text(
+                        report == null
+                            ? 'Sin informe de detección'
+                            : switch (report.kind) {
+                                WebContentKind.unknown =>
+                                  'Contenido desconocido',
+                                WebContentKind.genericHtml => 'HTML genérico',
+                                WebContentKind.possibleWebGame =>
+                                  'Posible juego web',
+                                WebContentKind.identifiedWebEngine =>
+                                  'Motor web identificado',
+                              },
+                      ),
+                      subtitle: Text(
+                        [
+                          if (report == null)
+                            'Importado antes de guardar evidencia'
+                          else
+                            'Detector v${report.version} · ${report.confidence == DetectionConfidence.candidate ? 'Candidato' : 'Inconcluso'}',
+                          if (state.manual) 'Selección manual',
+                        ].join(' · '),
+                      ),
+                    ),
+                    if (report != null)
+                      for (final item in report.evidence)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                          child: Text(item),
+                        ),
+                    if (widget.changeEngine case final change?)
+                      TextButton(
+                        onPressed: _saving
+                            ? null
+                            : () => _chooseEngine(state, change),
+                        child: const Text('Cambiar motor'),
+                      ),
+                  ],
+                );
+              },
+            ),
         ],
       ),
     ),

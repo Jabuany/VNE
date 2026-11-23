@@ -13,7 +13,7 @@ Linux usa el selector nativo de carpetas. Android usa el selector de documentos 
 - Se rechazan nombres ambiguos, rutas absolutas, separadores en nombres, duplicados sin distinción de mayúsculas y ciclos de directorios. En Linux x64 y arm64, las aperturas usan descriptores relativos y `openat2` para rechazar enlaces simbólicos y montajes anidados. Se requiere un kernel compatible y acceso a `/proc/self/fd`. [Resolución de rutas en Linux](https://man7.org/linux/man-pages/man2/openat2.2.html)
 - El progreso muestra entradas y volumen copiado. La cancelación se comprueba entre entradas y bloques. Una lectura que ya está en curso debe terminar antes de procesarla. Cuando empieza la publicación en SQLite, la operación deja de ser cancelable.
 - La biblioteca registra el juego después de validar el árbol y terminar la copia, si corresponde. Un fallo controlado o una cancelación elimina la copia temporal. Si el proceso o el equipo se apagan a mitad de una copia, puede quedar una carpeta privada sin registrar. La recuperación automática queda pendiente.
-- Al terminar el recorrido se inspeccionan hasta 4096 bytes de `index.html` sin ejecutar su contenido. Una firma indica un candidato HTML5. Una carpeta inconclusa queda sin motor asignado. El BLOQUE 8 cubrirá la evidencia persistente y la selección manual.
+- Al terminar el recorrido se inspeccionan las cabeceras de los archivos HTML de la raíz y se consideran archivos característicos del paquete. El motor se asigna solo ante evidencia suficiente para sugerir un candidato. Consulta [detección y selección manual](deteccion.md).
 
 ## Archivos comprimidos
 

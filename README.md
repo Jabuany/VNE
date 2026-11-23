@@ -2,7 +2,7 @@
 
 Reproductor en desarrollo para novelas visuales y juegos narrativos locales en Android y Linux. El primer runtime previsto es HTML5.
 
-El código inicial inspecciona el archivo `index.html` de una carpeta y devuelve evidencia de una posible entrada HTML5. La reproducción en ambas plataformas está pendiente.
+La reproducción en ambas plataformas está pendiente.
 
 La biblioteca local guarda sus datos en SQLite. La pantalla inicial ofrece búsqueda y detalles de los juegos registrados.
 
@@ -40,4 +40,5 @@ Si el teléfono bloquea la instalación por USB, desbloquéalo, habilita **Insta
 - [Contratos del Core](docs/core.md)
 - [Biblioteca, migraciones y respaldo](docs/biblioteca.md)
 - [Importación local y límites](docs/importacion.md)
+- [Detección web y selección de motor](docs/deteccion.md)
 - [Preparación del SDK](docs/preparacion-sdk.md)

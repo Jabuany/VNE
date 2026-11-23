@@ -7,14 +7,23 @@ import 'package:path_provider/path_provider.dart';
 
 import 'src/app/library_page.dart';
 import 'src/core/game.dart';
+import 'src/detection/web_game_detector.dart';
 import 'src/import/android_import_tree.dart';
 import 'src/import/folder_game_importer.dart';
 import 'src/import/game_importer.dart';
 import 'src/import/linux_import_tree.dart';
+import 'src/library/game_library.dart';
 import 'src/storage/sqlite_game_library.dart';
 
 void main() {
-  runApp(VneApp(loadGames: _loadGames, importFolder: _importFolder));
+  runApp(
+    VneApp(
+      loadGames: _loadGames,
+      importFolder: _importFolder,
+      loadDetection: _loadDetection,
+      changeEngine: _changeEngine,
+    ),
+  );
 }
 
 Future<ImportResult?> _importFolder(
@@ -38,7 +47,7 @@ Future<ImportResult?> _importFolder(
     openTree: Platform.isAndroid
         ? AndroidImportTree.open
         : (uri) => LinuxImportTree.open(uri, managedRoot),
-    publish: (game) => _saveGame(databasePath, game),
+    publish: (game, detection) => _saveGame(databasePath, game, detection),
     cancellation: cancellation,
     onProgress: onProgress,
   );
@@ -49,34 +58,53 @@ Future<ImportResult?> _importFolder(
   ));
 }
 
-Future<void> _saveGame(String path, Game game) => Isolate.run(() {
-  final library = SqliteGameLibrary.open(path);
-  try {
-    library.saveGame(game);
-  } finally {
-    library.close();
-  }
-});
+Future<void> _saveGame(String path, Game game, WebDetection detection) =>
+    _useLibrary(path, (library) => library.saveImportedGame(game, detection));
 
-Future<List<Game>> _loadGames() async {
+Future<String> _libraryPath() async {
   final directory = await getApplicationSupportDirectory();
   await directory.create(recursive: true);
-  final path = directory.uri.resolve('library.sqlite3').toFilePath();
-  return Isolate.run(() {
-    final library = SqliteGameLibrary.open(path);
-    try {
-      return library.listGames();
-    } finally {
-      library.close();
-    }
-  });
+  return directory.uri.resolve('library.sqlite3').toFilePath();
 }
 
+Future<List<Game>> _loadGames() async =>
+    _useLibrary(await _libraryPath(), (library) => library.listGames());
+
+Future<GameDetectionState> _loadDetection(String id) async =>
+    _useLibrary(await _libraryPath(), (library) => library.findDetection(id));
+
+Future<Game> _changeEngine(String id, EngineChoice choice) async => _useLibrary(
+  await _libraryPath(),
+  (library) => library.selectEngine(
+    id,
+    automatic: choice.automatic,
+    entryPoint: choice.entryPoint,
+  ),
+);
+
+Future<T> _useLibrary<T>(String path, T Function(GameLibrary) operation) =>
+    Isolate.run(() {
+      final library = SqliteGameLibrary.open(path);
+      try {
+        return operation(library);
+      } finally {
+        library.close();
+      }
+    });
+
 class VneApp extends StatelessWidget {
-  const VneApp({super.key, required this.loadGames, this.importFolder});
+  const VneApp({
+    super.key,
+    required this.loadGames,
+    this.importFolder,
+    this.loadDetection,
+    this.changeEngine,
+  });
 
   final Future<List<Game>> Function() loadGames;
   final FolderImportAction? importFolder;
+  final LoadDetection? loadDetection;
+  final ChangeEngine? changeEngine;
 
   @override
   Widget build(BuildContext context) => MaterialApp(
@@ -91,6 +119,11 @@ class VneApp extends StatelessWidget {
     localizationsDelegates: GlobalMaterialLocalizations.delegates,
     locale: const Locale('es'),
     supportedLocales: const [Locale('es')],
-    home: LibraryPage(loadGames: loadGames, importFolder: importFolder),
+    home: LibraryPage(
+      loadGames: loadGames,
+      importFolder: importFolder,
+      loadDetection: loadDetection,
+      changeEngine: changeEngine,
+    ),
   );
 }
