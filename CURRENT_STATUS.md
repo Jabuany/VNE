@@ -2,6 +2,9 @@
 
 ## Punto de control vigente · BLOQUE 4 · 2026-11-22
 
+- **Reverificación con teléfono.** Android 15 (API 35) detectado y autorizado en ADB. Se recompiló el APK y se verificó su firma. Dos intentos con `adb -d install -r build/app/outputs/flutter-apk/app-debug.apk` fallaron con `INSTALL_FAILED_USER_RESTRICTED: Install canceled by user`. `adb shell pm path org.vne.vne` no encontró el paquete. No se pudo probar el arranque en Android. Se documentó cómo habilitar la instalación por USB o continuar con el APK manualmente.
+- **Reverificación en Debian.** `flutter analyze --no-pub`, `flutter test --no-pub`, las tres comprobaciones del detector y `flutter build linux --debug --no-pub` aprobaron. La traza Wayland volvió a confirmar título VNE y fotogramas. Sin cambios de código ni dependencias.
+
 - **Etapa y avances.** Aplicación Flutter mínima en la raíz, con runners oficiales de Android y Linux. La pantalla de arranque muestra VNE. El detector HTML5 existente y sus comprobaciones se incorporaron al repositorio sin cambiar su contenido. La auditoría del detector conserva sus hallazgos pendientes.
 - **Archivos.** Creados `android/`, `linux/`, `lib/main.dart`, `test/widget_test.dart`, `pubspec.yaml`, `pubspec.lock`, `analysis_options.yaml`, `.gitignore` y `.metadata`. Actualizados `README.md` y este registro. Sin archivos del proyecto eliminados.
 - **Dependencias y decisiones.** Flutter 3.50.1 y Dart 3.14.0. Se usaron `widgets.dart` y `flutter_test` del SDK, y se retiraron las dependencias directas de la plantilla que la aplicación mínima no necesita. Identificador Android provisional `org.vne.vne`. Se descargaron artefactos de compilación Flutter y dependencias Gradle de la plantilla. Sin paquetes del sistema ni cambios globales.

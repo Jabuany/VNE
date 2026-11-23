@@ -29,6 +29,8 @@ flutter run -d ID_DEL_DISPOSITIVO
 
 Conecta un teléfono con depuración USB y autoriza la computadora en el dispositivo antes de ejecutar el último comando.
 
+Si el teléfono bloquea la instalación por USB, desbloquéalo, habilita **Instalar mediante USB** en las opciones de desarrollador si está disponible y confirma la instalación en pantalla.
+
 - [Estado y continuidad](CURRENT_STATUS.md)
 - [Entorno, arquitectura y plan](docs/arranque.md)
 - [Preparación del SDK](docs/preparacion-sdk.md)
