@@ -1,6 +1,16 @@
 # Estado actual de VNE
 
-## Punto de control vigente · BLOQUE 6 · 2026-11-22
+## Punto de control vigente · BLOQUE 7 · 2026-11-22
+
+- **Estado y avances.** Importación de carpetas locales por referencia o copia, con progreso, cancelación y límites de entradas, profundidad y bytes. Android usa SAF y Linux usa un selector nativo y aperturas confinadas. El detector inspecciona una cabecera acotada al terminar el recorrido y la biblioteca publica el registro en SQLite. Implementación y pruebas de Debian completadas. Validación física del selector Android pendiente.
+- **Archivos creados.** `android/app/src/main/kotlin/org/vne/vne/ImportTreeChannel.kt`, `lib/src/import/{android_import_tree,folder_game_importer,import_tree,linux_import_tree}.dart`, `test/folder_game_importer_test.dart` y `docs/importacion.md`. Actualizados la actividad Android, la composición y pantalla de biblioteca, el contrato de importación, el detector, las pruebas de interfaz, los manifiestos Pub, los registros generados de plugins Linux, README, avisos y este archivo. Sin archivos del repositorio eliminados.
+- **Dependencias.** `file_selector_linux` 0.9.4+1 y `ffi` 2.2.0 como dependencias directas. FFI ya formaba parte del árbol. Sin paquetes globales ni cambios de PATH. El APK de depuración aumentó unos 26 MiB respecto al BLOQUE 6.
+- **Pruebas.** En Debian 13.8 x64, `flutter analyze --no-pub`, `flutter test --no-pub` (21 pruebas) y las tres comprobaciones del detector aprobaron. Las ocho pruebas de importación abarcan persistencia, copia y referencia, enlaces, cambios de origen durante la inspección, nombres, límites, cancelación y limpieza por fallo. Se recompiló y arrancó el bundle Linux con almacén temporal. Se compiló y verificó la firma del APK Android.
+- **Teléfono.** La variante de integración aislada con ID `org.vne.vne.importtest` se instaló y arrancó en Android 15. El dispositivo rechazó los toques de ADB por falta de `INJECT_EVENTS`. Se dejó abierta la variante aislada y la carpeta sintética `Documentos/VNE-import-Mm2ERt` para que el usuario haga la selección. La biblioteca del APK habitual conserva sus datos.
+- **Pendientes y limitaciones.** Verificar en el teléfono ambos modos y el permiso persistente de referencia. El selector admite carpetas. ZIP, 7z y RAR, selección manual de motor, evidencia persistente y recuperación de una copia interrumpida por apagado quedan pendientes. La reproducción HTML5 sigue fuera de este bloque.
+- **Siguiente tarea.** Completar la comprobación manual en la variante Android y cerrar el punto de control del BLOQUE 7 antes de iniciar el BLOQUE 8.
+
+## Registro del BLOQUE 6 · 2026-11-22
 
 - **Etapa y avances.** Biblioteca SQLite con listados, consulta, alta, actualización y eliminación de registros, preferencias por juego, migración transaccional y claves foráneas. Pantalla con estados de carga, vacío y error, búsqueda, detalles y estado de asignación de motor. La importación y la disponibilidad efectiva de runtimes siguen pendientes.
 - **Archivos creados.** `lib/src/app/library_page.dart`, `lib/src/library/game_library.dart`, `lib/src/storage/sqlite_game_library.dart`, `test/sqlite_game_library_test.dart`, `docs/biblioteca.md` y `THIRD_PARTY_NOTICES`.

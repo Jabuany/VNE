@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:vne/main.dart';
 import 'package:vne/src/core/game.dart';
+import 'package:vne/src/import/game_importer.dart';
 
 void main() {
   testWidgets('shows an empty library at launch', (tester) async {
@@ -52,5 +53,38 @@ void main() {
     await tester.tap(find.text('Reintentar'));
     await tester.pumpAndSettle();
     expect(find.text('Aún no hay juegos en la biblioteca.'), findsOneWidget);
+  });
+
+  testWidgets('import offers both modes and reloads the library on success', (
+    tester,
+  ) async {
+    GameStorage? selected;
+    final games = <Game>[];
+    await tester.pumpWidget(
+      VneApp(
+        loadGames: () async => List.of(games),
+        importFolder: (storage, cancellation, onProgress) async {
+          selected = storage;
+          final Game game = (
+            id: 'imported',
+            title: 'Novela local',
+            source: (uri: Uri.directory('/novela'), storage: storage),
+            engineId: 'html5',
+            entryPoint: 'index.html',
+          );
+          games.add(game);
+          return GameImported(game);
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Importar carpeta'));
+    await tester.pumpAndSettle();
+    expect(find.text('Copiar a VNE'), findsOneWidget);
+    await tester.tap(find.text('Referenciar carpeta'));
+    await tester.pumpAndSettle();
+
+    expect(selected, GameStorage.externalReference);
+    expect(find.text('Novela local'), findsOneWidget);
   });
 }

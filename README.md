@@ -6,6 +6,8 @@ El código inicial inspecciona el archivo `index.html` de una carpeta y devuelve
 
 La biblioteca local guarda sus datos en SQLite. La pantalla inicial ofrece búsqueda y detalles de los juegos registrados.
 
+Usa **Importar carpeta** para copiar un juego local o referenciar su ubicación original. VNE inspecciona el contenido para detectar un candidato HTML5.
+
 ## Compilación y pruebas
 
 La aplicación Flutter está en la raíz. Usa Flutter 3.50.1 estable y Dart 3.14.0. En los ejemplos, `flutter` y `dart` se pueden invocar por ruta absoluta desde `/home/osorio/SDK/flutter/bin/`.
@@ -37,4 +39,5 @@ Si el teléfono bloquea la instalación por USB, desbloquéalo, habilita **Insta
 - [Entorno, arquitectura y plan](docs/arranque.md)
 - [Contratos del Core](docs/core.md)
 - [Biblioteca, migraciones y respaldo](docs/biblioteca.md)
+- [Importación local y límites](docs/importacion.md)
 - [Preparación del SDK](docs/preparacion-sdk.md)

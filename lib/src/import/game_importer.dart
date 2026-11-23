@@ -31,6 +31,10 @@ final class ImportFailed extends ImportResult {
   final Diagnostic diagnostic;
 }
 
+final class ImportCancelled extends ImportResult {
+  const ImportCancelled();
+}
+
 abstract interface class GameImporter {
   /// Imports without launching a game. Returns a selection request before
   /// publishing a library entry when the engine choice is ambiguous.
