@@ -143,4 +143,27 @@ void main() {
     );
     expect(find.text('Hay varias entradas HTML.'), findsOneWidget);
   });
+
+  testWidgets('opens a selected HTML5 game from the library', (tester) async {
+    final Game game = (
+      id: 'playable',
+      title: 'Novela',
+      source: (uri: Uri.directory('/local'), storage: GameStorage.managedCopy),
+      engineId: 'html5',
+      entryPoint: 'index.html',
+    );
+    Game? played;
+    await tester.pumpWidget(
+      VneApp(
+        loadGames: () async => [game],
+        playGame: (selected) async => played = selected,
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Novela'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Reproducir'));
+    await tester.pumpAndSettle();
+    expect(played, game);
+  });
 }

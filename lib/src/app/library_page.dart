@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import '../core/game.dart';
 import '../detection/game_detector.dart';
 import '../detection/web_game_detector.dart';
+import '../engine_api/engine.dart';
 import '../import/folder_game_importer.dart';
 import '../import/game_importer.dart';
 import '../library/game_library.dart';
@@ -10,6 +11,7 @@ import '../library/game_library.dart';
 typedef EngineChoice = ({bool automatic, String? entryPoint});
 typedef LoadDetection = Future<GameDetectionState> Function(String id);
 typedef ChangeEngine = Future<Game> Function(String id, EngineChoice choice);
+typedef PlayGame = Future<void> Function(Game game);
 
 typedef FolderImportAction = Future<ImportResult?> Function(
   GameStorage storage,
@@ -24,12 +26,14 @@ class LibraryPage extends StatefulWidget {
     this.importFolder,
     this.loadDetection,
     this.changeEngine,
+    this.playGame,
   });
 
   final Future<List<Game>> Function() loadGames;
   final FolderImportAction? importFolder;
   final LoadDetection? loadDetection;
   final ChangeEngine? changeEngine;
+  final PlayGame? playGame;
 
   @override
   State<LibraryPage> createState() => _LibraryPageState();
@@ -219,6 +223,7 @@ class _LibraryPageState extends State<LibraryPage> {
                                         game: game,
                                         loadDetection: widget.loadDetection,
                                         changeEngine: widget.changeEngine,
+                                        playGame: widget.playGame,
                                         onChanged: _refreshGames,
                                       ),
                                     ),
@@ -287,12 +292,14 @@ class _GameDetails extends StatefulWidget {
     required this.game,
     required this.loadDetection,
     required this.changeEngine,
+    required this.playGame,
     required this.onChanged,
   });
 
   final Game game;
   final LoadDetection? loadDetection;
   final ChangeEngine? changeEngine;
+  final PlayGame? playGame;
   final VoidCallback onChanged;
 
   @override
@@ -305,6 +312,27 @@ class _GameDetailsState extends State<_GameDetails> {
     game.id,
   );
   bool _saving = false;
+  bool _playing = false;
+
+  Future<void> _play(PlayGame playGame) async {
+    setState(() => _playing = true);
+    try {
+      await playGame(game);
+    } on RuntimeFailure catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(error.diagnostic.message)));
+      }
+    } on Exception {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se pudo abrir el reproductor.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _playing = false);
+    }
+  }
 
   Future<void> _chooseEngine(
     GameDetectionState detection,
@@ -366,6 +394,12 @@ class _GameDetailsState extends State<_GameDetails> {
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          if (game.engineId == 'html5' && game.entryPoint != null)
+            if (widget.playGame case final play?)
+              FilledButton(
+                onPressed: _playing || _saving ? null : () => _play(play),
+                child: const Text('Reproducir'),
+              ),
           Text(
             _runtimeStatus(game),
             style: Theme.of(context).textTheme.titleMedium,
@@ -437,7 +471,7 @@ class _GameDetailsState extends State<_GameDetails> {
                         ),
                     if (widget.changeEngine case final change?)
                       TextButton(
-                        onPressed: _saving
+                        onPressed: _saving || _playing
                             ? null
                             : () => _chooseEngine(state, change),
                         child: const Text('Cambiar motor'),

@@ -1,6 +1,16 @@
 # Estado actual de VNE
 
-## Punto de control vigente · BLOQUE 9 · 2026-11-22
+## Punto de control vigente · BLOQUE 10 · 2026-11-22
+
+- **Estado y avances.** BLOQUE 10 completado para Android. Reproductor HTML5 de desarrollo con Activity nativa, adaptador del Core, origen local y perfil por juego, acceso de lectura a copias privadas y referencias SAF, diagnósticos y controles de regreso, pausa y pantalla completa. Dispone de activación explícita en APK debug sin permiso de Internet.
+- **Archivos creados.** Activity, canal y lector de recursos Kotlin, manifiesto offline, adaptador Dart, prueba de adaptador, muestra propia `test/fixtures/html5`, guía de Android y texto Apache-2.0. Actualizados runner Android, composición Flutter, ficha de biblioteca, pruebas de interfaz, avisos y documentación. Sin archivos eliminados.
+- **Dependencias.** AndroidX WebKit 1.18.0 (Apache-2.0), unos 296 kB como AAR publicado. El WebView se obtiene del proveedor del sistema. Sin instalaciones globales ni descargas de juegos externos.
+- **Pruebas automatizadas.** `flutter analyze --no-pub` aprobó sin incidencias, `flutter test --no-pub` aprobó 35 pruebas y las tres comprobaciones del detector aprobaron. La última prueba de interfaz detectó una ubicación incorrecta del botón Reproducir, corregida antes de recompilar. Se construyó el APK offline con firma y manifiesto sin Internet verificados. La aplicación base volvió a compilar para Linux.
+- **Pruebas físicas.** Android 15 con WebView 157. Se instaló una variante aislada después de rechazos iniciales de ADB. Tres sesiones abiertas y cerradas por la API, pausa/reanudación por canal, rechazo de entrada ausente y vuelta a Flutter. La UI de la muestra confirmó CSS, JS, imagen, fuente, JSON y decodificación WAV, respuesta 404 y petición externa bloqueada. El contador pasó de visita 3 a 4 al reabrir y mostró visita 2 para otro juego, tras una corrida anterior. La inspección de UI de esa corrida anterior omitió temporalmente el árbol web en la tercera sesión. Se repitió con espera hasta que apareció el contenido.
+- **Condiciones pendientes.** La prueba física usó copias privadas. Reproducción de referencia SAF, audio audible, rotación, controles físicos y codecs/rangos adicionales quedan para validación posterior. La API explícita de guardado de ranuras y el catálogo no están implementados. La variante aislada sigue instalada en el teléfono.
+- **Siguiente tarea.** Solicitar autorización antes de extender el runtime a Linux y realizar la validación multiplataforma del BLOQUE 11.
+
+## Registro del BLOQUE 9 · 2026-11-22
 
 - **Estado y avances.** Evaluación del runtime HTML5 completada. Propuesta pendiente de aprobación: Android primero con Activity Kotlin, WebView del sistema y AndroidX WebKit. Para Linux, auxiliar GTK 3 con WebKitGTK 4.1, perfil por juego y Bubblewrap. Se documentaron navegación, recursos locales, permisos, audio, entrada, pantalla completa, cierre y aislamiento de datos.
 - **Archivos.** Creado `docs/runtime-html5.md`. Actualizados `README.md` y este registro. Sin archivos eliminados, cambios de código, dependencias instaladas ni descargas de juegos.

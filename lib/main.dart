@@ -2,12 +2,16 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:file_selector_linux/file_selector_linux.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:material_ui/material_ui.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'src/app/library_page.dart';
+import 'src/core/diagnostics.dart';
 import 'src/core/game.dart';
 import 'src/detection/web_game_detector.dart';
+import 'src/engine_api/engine.dart';
+import 'src/engines/html5/android_html5_adapter.dart';
 import 'src/import/android_import_tree.dart';
 import 'src/import/folder_game_importer.dart';
 import 'src/import/game_importer.dart';
@@ -16,14 +20,45 @@ import 'src/library/game_library.dart';
 import 'src/storage/sqlite_game_library.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  final androidHtml5 =
+      kDebugMode &&
+          Platform.isAndroid &&
+          const bool.fromEnvironment('VNE_HTML5_DEV')
+      ? AndroidHtml5Adapter()
+      : null;
   runApp(
     VneApp(
       loadGames: _loadGames,
       importFolder: _importFolder,
       loadDetection: _loadDetection,
       changeEngine: _changeEngine,
+      playGame: androidHtml5 == null
+          ? null
+          : (game) => _play(androidHtml5, game),
     ),
   );
+}
+
+Future<void> _play(RuntimeAdapter adapter, Game game) async {
+  final support = await getApplicationSupportDirectory();
+  final settings = await _useLibrary(
+    support.uri.resolve('library.sqlite3').toFilePath(),
+    (library) => library.findSettings(game.id),
+  );
+  final session = await adapter.launch((
+    game: game,
+    settings: settings ?? (fullscreen: false, preferredLocale: null),
+    privateDataDirectory: support.uri.resolve('runtime-data/${game.id}/'),
+  ));
+  RuntimeFailure? failure;
+  await for (final event in session.events) {
+    if (event.diagnostic case final diagnostic?
+        when diagnostic.severity == DiagnosticSeverity.error) {
+      failure = RuntimeFailure(diagnostic);
+    }
+  }
+  if (failure != null) throw failure;
 }
 
 Future<ImportResult?> _importFolder(
@@ -99,12 +134,14 @@ class VneApp extends StatelessWidget {
     this.importFolder,
     this.loadDetection,
     this.changeEngine,
+    this.playGame,
   });
 
   final Future<List<Game>> Function() loadGames;
   final FolderImportAction? importFolder;
   final LoadDetection? loadDetection;
   final ChangeEngine? changeEngine;
+  final PlayGame? playGame;
 
   @override
   Widget build(BuildContext context) => MaterialApp(
@@ -124,6 +161,7 @@ class VneApp extends StatelessWidget {
       importFolder: importFolder,
       loadDetection: loadDetection,
       changeEngine: changeEngine,
+      playGame: playGame,
     ),
   );
 }

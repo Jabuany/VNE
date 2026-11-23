@@ -104,7 +104,7 @@ internal class ImportTreeChannel(
 
     private fun treeUri(call: MethodCall): Uri =
         Uri.parse(requireNotNull(call.argument<String>("source"))).also {
-            require(isLocalTree(it))
+            require(isLocalGameTree(it))
         }
 
     private fun children(tree: Uri, id: String): List<Map<String, Any?>> {
@@ -138,7 +138,7 @@ internal class ImportTreeChannel(
         val result = selection ?: return
         selection = null
         val uri = if (resultCode == Activity.RESULT_OK) data?.data else null
-        if (uri == null || isLocalTree(uri)) {
+        if (uri == null || isLocalGameTree(uri)) {
             result.success(uri?.toString())
         } else {
             result.error("unsupported_provider", "Selecciona una carpeta del dispositivo.", null)
@@ -155,13 +155,5 @@ internal class ImportTreeChannel(
 
     companion object {
         private const val pickerRequest = 641
-        private val localAuthorities = setOf(
-            "com.android.externalstorage.documents",
-            "com.android.providers.downloads.documents",
-        )
-
-        private fun isLocalTree(uri: Uri): Boolean =
-            uri.scheme == "content" && uri.authority in localAuthorities &&
-                DocumentsContract.isTreeUri(uri)
     }
 }

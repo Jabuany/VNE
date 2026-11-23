@@ -36,6 +36,10 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
+    if (providers.environmentVariable("VNE_HTML5_OFFLINE").orNull == "1") {
+        sourceSets.getByName("debug").manifest.srcFile("src/offline/AndroidManifest.xml")
+    }
 }
 
 kotlin {
@@ -46,4 +50,8 @@ kotlin {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    implementation("androidx.webkit:webkit:1.18.0")
 }
