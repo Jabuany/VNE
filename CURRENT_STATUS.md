@@ -1,6 +1,14 @@
 # Estado actual de VNE
 
-## Punto de control vigente · BLOQUE 2 · 2026-11-22
+## Punto de control vigente · BLOQUE 3 · 2026-11-22
+
+- **Estado.** Parcialmente completado. El SDK local en `/home/osorio/SDK/flutter` funciona. La instalación de herramientas Linux está bloqueada por autenticación administrativa.
+- **Comprobaciones.** `flutter --version` y `dart --version` por ruta absoluta confirmaron Flutter 3.50.1 estable (revisión `ae9b586f34`) y Dart 3.14.0. `flutter doctor -v` terminó con código 0, detectó Linux y la conectividad, y confirmó que faltan Clang, CMake, Ninja y GTK 3 de desarrollo. Android SDK y Chrome tampoco se detectaron. Flutter y Dart siguen fuera de PATH.
+- **Instalación.** `sudo -n -l` y `sudo -n apt update` devolvieron «a password is required». La simulación con los índices actuales estimó 89 paquetes nuevos y ninguna actualización o eliminación. No se refrescaron índices ni se instaló software.
+- **Cambios.** Solo se actualizó este registro. Antes de editarlo, Git conservaba el mismo estado que al inicio del bloque. Sin cambios en código, PATH o configuración global.
+- **Siguiente tarea.** El usuario debe autenticar la transacción APT en su terminal. Después se repetirá Doctor para cerrar el BLOQUE 3. Android sigue pendiente de una autorización separada. El BLOQUE 4 requiere su propio punto de control.
+
+## Registro del BLOQUE 2 · 2026-11-22
 
 - **Reverificación del alcance Android y Linux.** Se ejecutó Dart 3.14.0 por ruta absoluta y se confirmó la etiqueta local de Flutter 3.50.1. APT confirmó la estimación previa de 89 paquetes, 63,0 MB de descarga y 321 MB de disco. Java, adb y sdkmanager siguen fuera de PATH. Se documentaron criterios separados de diagnóstico, compilación y arranque para ambos destinos. No se ejecutaron compilaciones ni se instalaron herramientas.
 
