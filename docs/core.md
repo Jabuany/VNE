@@ -1,4 +1,4 @@
-# Contratos del Core · propuesta del BLOQUE 5
+# Contratos del Core · API 1.0
 
 Los contratos viven en `lib/src` y usan Dart sin importar Flutter. La aplicación será responsable de componer los servicios y presentar su estado. Los adaptadores de plataforma podrán usar APIs nativas por debajo del contrato.
 
@@ -12,7 +12,7 @@ Los contratos viven en `lib/src` y usan Dart sin importar Flutter. La aplicació
 
 ## Versiones y compatibilidad
 
-Propuesta inicial **1.0**, independiente de la versión del runtime y de la versión de la aplicación. Un host acepta un contrato del mismo número mayor cuyo número menor sea igual o inferior al suyo. El número mayor cambia con las incompatibilidades. Un paquete debe coincidir también con el destino de plataforma y arquitectura. Estas comprobaciones permiten filtrar candidatos. La instalación deberá verificar el manifiesto, HTTPS y SHA-256 antes de activar el paquete.
+La API **1.0** se versiona de forma independiente de la versión del runtime y de la aplicación. Un host acepta un contrato del mismo número mayor cuyo número menor sea igual o inferior al suyo. El número mayor cambia con las incompatibilidades. Un paquete debe coincidir también con el destino de plataforma y arquitectura. Estas comprobaciones permiten filtrar candidatos. La instalación deberá verificar el manifiesto, HTTPS y SHA-256 antes de activar el paquete.
 
 ## Ciclo de vida y datos
 
@@ -20,8 +20,8 @@ Una solicitud de lanzamiento aporta el juego, sus ajustes y una ubicación de da
 
 La instalación solo se invoca tras confirmación del usuario. Un cambio de versión debe conservar la instalación anterior hasta que la nueva quede preparada. Una cancelación previa a la activación también la conserva. La desinstalación preserva juegos y guardados. Los diagnósticos se muestran localmente y deben omitir rutas privadas y credenciales.
 
-## Decisión pendiente
+## Transporte
 
-Se recomienda una sesión Dart tipada en la aplicación, con transporte definido dentro de cada adaptador. Permite probar el Core con independencia de la plataforma y mantener pequeñas las interfaces opcionales. Un protocolo serializado común puede ser adecuado si más adelante se necesita distribuir adaptadores externos con interfaces de otro lenguaje. Exigirlo ahora añadiría negociación y validación del esquema antes de conocer las necesidades del primer runtime.
+La aplicación usa una sesión Dart tipada, con transporte definido dentro de cada adaptador. Permite probar el Core con independencia de la plataforma y mantener pequeñas las interfaces opcionales. Un protocolo serializado común puede evaluarse si se necesita distribuir adaptadores externos con interfaces de otro lenguaje.
 
-El BLOQUE 5 cubre contratos y pruebas de sus reglas de compatibilidad y resultados. La persistencia, importación, gestión de paquetes y ejecución se implementan en sus bloques. La API queda pendiente de aprobación.
+El BLOQUE 5 cubre contratos y pruebas de sus reglas de compatibilidad y resultados. La persistencia, importación, gestión de paquetes y ejecución se implementan en sus bloques.

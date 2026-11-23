@@ -1,6 +1,17 @@
 # Estado actual de VNE
 
-## Punto de control vigente · BLOQUE 5 · 2026-11-22
+## Punto de control vigente · BLOQUE 6 · 2026-11-22
+
+- **Etapa y avances.** Biblioteca SQLite con listados, consulta, alta, actualización y eliminación de registros, preferencias por juego, migración transaccional y claves foráneas. Pantalla con estados de carga, vacío y error, búsqueda, detalles y estado de asignación de motor. La importación y la disponibilidad efectiva de runtimes siguen pendientes.
+- **Archivos creados.** `lib/src/app/library_page.dart`, `lib/src/library/game_library.dart`, `lib/src/storage/sqlite_game_library.dart`, `test/sqlite_game_library_test.dart`, `docs/biblioteca.md` y `THIRD_PARTY_NOTICES`.
+- **Archivos modificados.** `.gitignore`, `lib/main.dart`, `test/widget_test.dart`, `pubspec.yaml`, `pubspec.lock`, `linux/flutter/generated_plugins.cmake`, `README.md`, `docs/core.md`, `DECISIONS.md` y este registro. Sin archivos eliminados.
+- **Dependencias.** `sqlite3` 3.9.2, `path_provider` 2.1.6 y `material_ui` 1.11.1. Gradle instaló Platform 35 revisión 2 y CMake 3.22.1 en el SDK Android local para dependencias. Sin cambios de PATH ni paquetes globales.
+- **Pruebas.** Dart format, `flutter analyze --no-pub`, 12 pruebas Flutter y las tres comprobaciones del detector aprobadas. Se corrigió un fallo inicial en el botón de reintento que devolvía un Future a `setState`. Las pruebas SQLite verificaron CRUD, persistencia tras reabrir, integridad referencial, rechazo de esquema futuro y reversión de migración fallida.
+- **Validación en plataforma.** Compilación debug y arranque verificados en Debian 13.8 amd64 y Android 15 físico. Se verificó la creación de una base vacía con esquema 1 en ambos destinos. CRUD y búsqueda se verificaron en las pruebas automatizadas de Debian.
+- **Decisiones.** Se registró la aprobación de la API del Core tras la autorización del BLOQUE 6. Se implementó el esquema inicial para juegos y ajustes. Catálogo, guardados e historial se incorporarán cuando existan sus flujos.
+- **Siguiente tarea.** Solicitar autorización para el BLOQUE 7 de importación local. Integrar selección, copia o referencia y detección sin ejecutar juegos. La reproducción HTML5 continúa pendiente.
+
+## Registro del BLOQUE 5 · 2026-11-22
 
 - **Etapa y avances.** Contratos del Core en Dart para juego, ajustes, metadatos de guardado, diagnóstico, detección, importación, API de motor, sesiones y gestión de paquetes. Propuesta de API 1.0, con compatibilidad por número mayor y menor, y filtro adicional por plataforma y arquitectura.
 - **Archivos creados.** `lib/src/core/game.dart`, `lib/src/core/diagnostics.dart`, `lib/src/detection/game_detector.dart`, `lib/src/import/game_importer.dart`, `lib/src/engine_api/engine.dart`, `lib/src/engine_manager/runtime_manager.dart`, `test/core_contracts_test.dart` y `docs/core.md`.
